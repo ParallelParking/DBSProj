@@ -35,5 +35,45 @@ public class RoomEquipment {
         this.type = type;
     }
 
+    public String getBlock() {
+        return block;
+    }
+
+    public void setBlock(String block) {
+        this.block = block;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Room getRoomRef() {
+        return roomRef;
+    }
+
+    public void setRoomRef(Room roomRef) {
+        this.roomRef = roomRef;
+    }
+
+    public Equipment getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(Equipment equipment) {
+        this.equipment = equipment;
+    }
+
     // Getters and setters...
 }
