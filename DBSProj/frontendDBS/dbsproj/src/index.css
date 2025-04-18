@@ -1,4 +1,4 @@
-header{
+header {
   width: 100%;
   height: 40px;
   display: flex;
@@ -11,7 +11,7 @@ header{
   margin-bottom: 60px;
 }
 
-header > h1{
+header > h1 {
   font-size: 28px;
   font-weight: 400;
   line-height: 60px;
@@ -23,26 +23,52 @@ header > img {
   padding-right: 10px;
 }
 
-.container{
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background-color: #FAFAF8;
 }
 
-.left, .right{
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.left,
+.right {
   display: flex;
   flex-direction: column;
   width: 500px;
   max-width: 500px;
-  height: 400px;
+  height: 450px;
   border: 1px solid black;
   padding-left: 100px;
   padding-top: 30px;
-  
-
+  border-radius: 0;
+  border-radius: 10px 0 0 10px; /* we'll fix right's radius below */
+  height: auto; /* ← important */
 }
 
-.left > input {
+/* Individual side rounding */
+.left {
+  border-radius: 10px 0px 0px 10px;
+}
+
+.right {
+  border-radius: 0px 10px 10px 0px;
+}
+
+/* Shared form styles */
+.left form,
+.right form {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.left form input,
+.right form input {
   padding-left: 10px;
   border-radius: 6px;
   border: 1px solid #D1D5DB;
@@ -52,7 +78,19 @@ header > img {
   margin-bottom: 20px;
 }
 
-.left > button {
+.left form select,
+.right form select {
+  padding-left: 10px;
+  border-radius: 6px;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  max-width: 300px;
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.left form button,
+.right form button {
   font-family: Inter, sans-serif;
   border-radius: 6px;
   border: none;
@@ -60,20 +98,39 @@ header > img {
   color: #FAFAF8;
   width: 150px;
   height: 40px;
-  font-size: 0.75 rem;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
-.left{
-  border-radius: 10px 0px 0px 10px;
+.checkbox-container {
+  border: 1px solid #D1D5DB;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  background-color: white;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.right{
-  border-radius: 0px 10px 10px 0px;
-}
-
-body {
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
   margin: 0;
-  font-family: Inter, sans-serif;
-  background-color: #FAFAF8;
+}
+
+.checkbox-item input[type="checkbox"] {
+  margin: 0;
+  margin-right: 6px;
+  vertical-align: middle;
+  transform: scale(0.85); /* optional: smaller checkbox */
+}
+
+.checkbox-item input[type="checkbox"]:checked {
+  accent-color: black;  /* Changes the checkbox tick color to black */
 }
