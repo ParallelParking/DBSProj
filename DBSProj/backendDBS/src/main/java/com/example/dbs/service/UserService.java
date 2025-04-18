@@ -1,6 +1,6 @@
 package com.example.dbs.service;
 
-import com.example.dbs.model.User;
+import com.example.dbs.model.Users;
 import com.example.dbs.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User saveUser(User user) {
+    public Users saveUser(Users user) {
         return userRepository.save(user);
     }
 
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<Users> getUserByEmail(String email) {
         return userRepository.findById(email);
     }
 
-    public List<User> getAllUsers() {
+    public List<Users> getAllUsers() {
         return userRepository.findAll();
     }
 

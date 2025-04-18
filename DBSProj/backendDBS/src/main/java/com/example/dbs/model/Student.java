@@ -3,7 +3,7 @@ package com.example.dbs.model;
 import jakarta.persistence.Entity;
 
 @Entity
-public class Student extends User{
+public class Student extends Users{
 
     private Long regno;
 

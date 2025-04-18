@@ -3,7 +3,7 @@ package com.example.dbs.model;
 import jakarta.persistence.Entity;
 
 @Entity
-public class Security extends User{
+public class Security extends Users{
 
    public Security(){
    }

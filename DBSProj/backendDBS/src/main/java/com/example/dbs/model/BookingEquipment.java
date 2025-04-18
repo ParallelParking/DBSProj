@@ -11,9 +11,11 @@ public class BookingEquipment {
     private String block;
 
     @Id
+    @Column(name="room_no")
     private String room;
 
     @Id
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     @Id

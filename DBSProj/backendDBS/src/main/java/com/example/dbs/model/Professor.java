@@ -4,7 +4,7 @@ package com.example.dbs.model;
 import jakarta.persistence.Entity;
 
 @Entity
-public class Professor extends User {
+public class Professor extends Users {
 
     private Boolean isCultural;
 

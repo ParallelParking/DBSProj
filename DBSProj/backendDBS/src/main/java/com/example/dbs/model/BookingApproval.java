@@ -11,9 +11,11 @@ public class BookingApproval {
     private String block;
 
     @Id
+    @Column(name = "room_no") 
     private String roomNo;
 
     @Id
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     private String approverType;

@@ -7,15 +7,15 @@ import jakarta.persistence.InheritanceType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class User {
+public class Users {
     @Id
     private String email;
     private String name;
     private Long phone;
 
-    public User(){
+    public Users(){
     }
-    public User(String email, String name, Long phone) {
+    public Users(String email, String name, Long phone) {
         this.email = email;
         this.name = name;
         this.phone = phone;

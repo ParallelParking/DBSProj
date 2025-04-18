@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.dbs.model.User;
+import com.example.dbs.model.Users;
 import com.example.dbs.service.UserService;
 
 @RestController
@@ -30,43 +30,43 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public List<User> getAllUsers() {
+    public List<Users> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        Optional<User> userOptional = userService.getUserByEmail(email);
+    public ResponseEntity<Users> getUserByEmail(@PathVariable String email) {
+        Optional<Users> userOptional = userService.getUserByEmail(email);
         // If user found return 200 OK, else return 404 NOT FOUND
         return userOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<Users> createUser(@RequestBody Users user) {
         if (userService.existsByEmail(user.getEmail())) {
             // return 409 CONFLICT if user exists
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        User createdUser = userService.saveUser(user);
+        Users createdUser = userService.saveUser(user);
         // return 201 CREATED
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     //TODO: Special handling necessary to update special user fields (RegNo etc.)
     @PutMapping("/{email}")
-    public ResponseEntity<User> updateUser(@PathVariable String email, @RequestBody User userDetails) {
-        Optional<User> existingUserOptional = userService.getUserByEmail(email);
+    public ResponseEntity<Users> updateUser(@PathVariable String email, @RequestBody Users userDetails) {
+        Optional<Users> existingUserOptional = userService.getUserByEmail(email);
         if (existingUserOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        User existingUser = existingUserOptional.get();
+        Users existingUser = existingUserOptional.get();
         existingUser.setName(userDetails.getName());
         existingUser.setPhone(userDetails.getPhone());
         // Considering email is primary key and intrinsic to account: Cannot change
 
-        User updatedUser = userService.saveUser(existingUser);
+        Users updatedUser = userService.saveUser(existingUser);
         return ResponseEntity.ok(updatedUser);
     }
 

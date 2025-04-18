@@ -1,5 +1,6 @@
 package com.example.dbs.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -11,9 +12,11 @@ import jakarta.persistence.JoinColumn;
 public class ClubMembership {
 
     @Id
+    @Column(name="stu_email")
     private String stuEmail;  // student email (FK to Student)
 
     @Id
+    @Column(name="club_name")
     private String clubName;  // club name (FK to Club)
 
     @ManyToOne

@@ -1,5 +1,8 @@
 package com.example.dbs.model;
 
+import jakarta.persistence.Entity;
+
+@Entity
 public class StudentCouncil extends Student {
     private String position;
 

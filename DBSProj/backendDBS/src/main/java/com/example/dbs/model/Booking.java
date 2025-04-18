@@ -11,15 +11,14 @@ public class Booking {
     private String block;
 
     @Id
+    @Column(name = "room_no") // ensures the DB column matches Room's field
     private String roomNo;
 
     @Id
+    @Column(name = "date_time") // explicitly specify column name
     private LocalDateTime dateTime;
 
     private String purpose;
-
-    private String studentEmail;
-    private String clubName;
 
     @ManyToOne
     @JoinColumns({
@@ -40,14 +39,12 @@ public class Booking {
 
     public Booking() {}
 
-    public Booking(String block, String roomNo, LocalDateTime dateTime, String purpose,
-                   String studentEmail, String clubName, Room room, Student student, Club club) {
+    public Booking(String block, String roomNo, LocalDateTime dateTime, String purpose
+        , Room room, Student student, Club club) {
         this.block = block;
         this.roomNo = roomNo;
         this.dateTime = dateTime;
         this.purpose = purpose;
-        this.studentEmail = studentEmail;
-        this.clubName = clubName;
         this.room = room;
         this.student = student;
         this.club = club;
@@ -85,22 +82,6 @@ public class Booking {
         this.purpose = purpose;
     }
 
-    public String getStudentEmail() {
-        return studentEmail;
-    }
-
-    public void setStudentEmail(String studentEmail) {
-        this.studentEmail = studentEmail;
-    }
-
-    public String getClubName() {
-        return clubName;
-    }
-
-    public void setClubName(String clubName) {
-        this.clubName = clubName;
-    }
-
     public Room getRoom() {
         return room;
     }
@@ -124,6 +105,4 @@ public class Booking {
     public void setClub(Club club) {
         this.club = club;
     }
-
-    // Getters and Setters
 }

@@ -3,7 +3,7 @@ package com.example.dbs.model;
 import jakarta.persistence.Entity;
 
 @Entity
-public class FloorManager extends User{
+public class FloorManager extends Users{
 
     public FloorManager(){
     }

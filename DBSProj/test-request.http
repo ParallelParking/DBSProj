@@ -1,0 +1,10 @@
+### POST Request to create a user
+POST http://localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "email": "john.de@example.com",
+  "name": "John Doe",
+  "phone": 1234567890,
+  "regno": 20220123
+}
