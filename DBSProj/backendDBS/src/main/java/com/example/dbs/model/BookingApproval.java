@@ -1,54 +1,75 @@
 package com.example.dbs.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.example.dbs.types.ApprovalStatus;
+import com.example.dbs.types.ApproverRole;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
+
 @Entity
-@IdClass(BookingApprovalId.class)
+// @IdClass(BookingApprovalId.class)
 public class BookingApproval {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Ensures these are set via the booking relationship
+    @Column(name = "block", insertable = false, updatable = false)
     private String block;
-
-    @Id
-    @Column(name = "room_no") 
+    @Column(name = "room_no", insertable = false, updatable = false)
     private String roomNo;
-
-    @Id
-    @Column(name = "date_time")
+    @Column(name = "date_time", insertable = false, updatable = false)
     private LocalDateTime dateTime;
 
-    private String approverType;
+    @Enumerated(EnumType.STRING)
+    private ApproverRole approverRole; // Changed from approverType
+
     private String approverEmail;
-    private String approvalStatus;
+
+    @Enumerated(EnumType.STRING)
+    private ApprovalStatus approvalStatus; // Changed from String
+    
     private LocalDateTime approvalTime;
     private String comments;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumns({
-        @JoinColumn(name = "block", referencedColumnName = "block", insertable = false, updatable = false),
-        @JoinColumn(name = "room_no", referencedColumnName = "room_no", insertable = false, updatable = false),
-        @JoinColumn(name = "date_time", referencedColumnName = "date_time", insertable = false, updatable = false)
+        @JoinColumn(name = "block", referencedColumnName = "block"),
+        @JoinColumn(name = "room_no", referencedColumnName = "roomNo"), 
+        @JoinColumn(name = "date_time", referencedColumnName = "dateTime") 
     })
     private Booking booking;
 
     public BookingApproval() {}
 
-    public BookingApproval(String block, String roomNo, LocalDateTime dateTime,
-                           String approverType, String approverEmail, String approvalStatus,
-                           LocalDateTime approvalTime, String comments, Booking booking) {
-        this.block = block;
-        this.roomNo = roomNo;
-        this.dateTime = dateTime;
-        this.approverType = approverType;
+    public BookingApproval(Booking booking, ApproverRole approverRole, String approverEmail, ApprovalStatus approvalStatus, LocalDateTime approvalTime, String comments) {
+        this.booking = booking;
+        this.block = booking.getBlock();
+        this.roomNo = booking.getRoomNo();
+        this.dateTime = booking.getDateTime();
+        this.approverRole = approverRole;
         this.approverEmail = approverEmail;
         this.approvalStatus = approvalStatus;
         this.approvalTime = approvalTime;
         this.comments = comments;
-        this.booking = booking;
     }
 
     // Getters and setters
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getBlock() { return block; }
     public void setBlock(String block) { this.block = block; }
@@ -59,14 +80,14 @@ public class BookingApproval {
     public LocalDateTime getDateTime() { return dateTime; }
     public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
 
-    public String getApproverType() { return approverType; }
-    public void setApproverType(String approverType) { this.approverType = approverType; }
+    public ApproverRole getApproverRole() { return approverRole; }
+    public void setApproverRole(ApproverRole approverRole) { this.approverRole = approverRole; }
 
     public String getApproverEmail() { return approverEmail; }
     public void setApproverEmail(String approverEmail) { this.approverEmail = approverEmail; }
 
-    public String getApprovalStatus() { return approvalStatus; }
-    public void setApprovalStatus(String approvalStatus) { this.approvalStatus = approvalStatus; }
+    public ApprovalStatus getApprovalStatus() { return approvalStatus; }
+    public void setApprovalStatus(ApprovalStatus approvalStatus) { this.approvalStatus = approvalStatus; }
 
     public LocalDateTime getApprovalTime() { return approvalTime; }
     public void setApprovalTime(LocalDateTime approvalTime) { this.approvalTime = approvalTime; }
