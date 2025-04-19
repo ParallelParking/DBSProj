@@ -1,7 +1,22 @@
 package com.example.dbs.model;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.*;
+import java.util.Set;
+
+import com.example.dbs.types.BookingStatus;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 @IdClass(BookingId.class)
@@ -20,6 +35,12 @@ public class Booking {
 
     private String purpose;
 
+    @Enumerated(EnumType.STRING)
+    private BookingStatus overallStatus = BookingStatus.PENDING_APPROVAL; //DEFAULT
+
+    private String studentEmail;
+    private String clubName;
+
     @ManyToOne
     @JoinColumns({
         @JoinColumn(name = "block", referencedColumnName = "block", insertable = false, updatable = false),
@@ -35,6 +56,10 @@ public class Booking {
     @JoinColumn(name = "club_name", referencedColumnName = "name", insertable = false, updatable = false)
     private Club club;
 
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true, 
+                fetch = FetchType.LAZY)
+    private Set<BookingApproval> approvals; 
+
     // Constructors
 
     public Booking() {}
@@ -48,6 +73,25 @@ public class Booking {
         this.room = room;
         this.student = student;
         this.club = club;
+
+        this.studentEmail = student.getEmail();
+        this.clubName = club.getName();
+    }
+
+    public BookingStatus getOverallStatus() {
+        return overallStatus;
+    }
+
+    public void setOverallStatus(BookingStatus overallStatus) {
+        this.overallStatus = overallStatus;
+    }
+
+    public Set<BookingApproval> getApprovals() {
+        return approvals;
+    }
+
+    public void setApprovals(Set<BookingApproval> approvals) {
+        this.approvals = approvals;
     }
 
     public String getBlock() {
@@ -104,5 +148,13 @@ public class Booking {
 
     public void setClub(Club club) {
         this.club = club;
+    }
+
+    public String getStudentEmail() {
+        return studentEmail;
+    }
+
+    public String getClubName() {
+        return clubName;
     }
 }
