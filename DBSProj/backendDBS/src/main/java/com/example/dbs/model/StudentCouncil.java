@@ -9,8 +9,8 @@ public class StudentCouncil extends Student {
     public StudentCouncil() {
     }
 
-    public StudentCouncil(String email, String name, Long phone, Long regno, String position) {
-        super(email, name, phone, regno);
+    public StudentCouncil(String email, String name, Long phone, Long regno, String position, String password) {
+        super(email, name, phone, regno, password);
         this.position = position;
     }
 

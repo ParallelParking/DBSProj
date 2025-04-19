@@ -10,8 +10,8 @@ public class Professor extends Users {
 
     public Professor() {}
 
-    public Professor(String email, String name, Long phone, Boolean isCultural) {
-        super(email, name, phone);
+    public Professor(String email, String name, Long phone, Boolean isCultural, String password) {
+        super(email, name, phone, password);
         this.isCultural = isCultural;
     }
 

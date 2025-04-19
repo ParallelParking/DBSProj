@@ -10,8 +10,8 @@ public class Student extends Users{
     public Student() {
     }
 
-    public Student(String email, String name, Long phone, Long regno) {
-        super(email, name, phone);
+    public Student(String email, String name, Long phone, Long regno, String password) {
+        super(email, name, phone, password);
         this.regno = regno;
     }
 

@@ -8,8 +8,8 @@ public class Security extends Users{
    public Security(){
    }
 
-    public Security(String email, String name, Long phone) {
-        super(email, name, phone);
+    public Security(String email, String name, Long phone, String password) {
+        super(email, name, phone, password);
     }
 
     @Override
