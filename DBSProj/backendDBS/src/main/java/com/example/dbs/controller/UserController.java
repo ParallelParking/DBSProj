@@ -19,7 +19,7 @@ import com.example.dbs.model.Users;
 import com.example.dbs.service.UserService;
 
 @RestController
-@RequestMapping("/api/user") // Base endpoint path
+@RequestMapping("/api/users") // Base endpoint path
 public class UserController {
     private final UserService userService;
 
@@ -48,7 +48,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        Users createdUser = userService.saveUser(user);
+        Users createdUser = userService.createUser(user);
         // return 201 CREATED
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
@@ -66,7 +66,7 @@ public class UserController {
         existingUser.setPhone(userDetails.getPhone());
         // Considering email is primary key and intrinsic to account: Cannot change
 
-        Users updatedUser = userService.saveUser(existingUser);
+        Users updatedUser = userService.createUser(existingUser);
         return ResponseEntity.ok(updatedUser);
     }
 

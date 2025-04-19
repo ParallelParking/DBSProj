@@ -1,3 +1,5 @@
+// THIS FILE IS NO LONGER NEEDED AND SHOULD BE DELETED
+
 package com.example.dbs.model;
 
 import java.io.Serializable;

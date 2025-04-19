@@ -1,5 +1,6 @@
 package com.example.dbs.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -9,17 +10,27 @@ import jakarta.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Users {
     @Id
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String name;
+
     private Long phone;
+
+    @Column(nullable = false)
+    private String password;
 
     public Users(){
     }
-    public Users(String email, String name, Long phone) {
+
+    public Users(String email, String name, Long phone, String password) {
         this.email = email;
         this.name = name;
         this.phone = phone;
+        this.password = password;
     }
+
     public String getEmail() {
         return email;
     }
@@ -37,6 +48,12 @@ public class Users {
     }
     public void setPhone(Long phone) {
         this.phone = phone;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
     @Override
     public String toString() {
