@@ -38,7 +38,9 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private BookingStatus overallStatus = BookingStatus.PENDING_APPROVAL; //DEFAULT
 
+    @Column(name = "student_email")
     private String studentEmail;
+    @Column(name="club_name")
     private String clubName;
 
     @ManyToOne

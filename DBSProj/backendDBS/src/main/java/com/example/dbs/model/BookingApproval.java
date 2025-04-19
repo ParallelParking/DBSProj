@@ -47,8 +47,8 @@ public class BookingApproval {
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumns({
         @JoinColumn(name = "block", referencedColumnName = "block"),
-        @JoinColumn(name = "room_no", referencedColumnName = "roomNo"), 
-        @JoinColumn(name = "date_time", referencedColumnName = "dateTime") 
+        @JoinColumn(name = "room_no", referencedColumnName = "room_no"), 
+        @JoinColumn(name = "date_time", referencedColumnName = "date_time") 
     })
     private Booking booking;
 
