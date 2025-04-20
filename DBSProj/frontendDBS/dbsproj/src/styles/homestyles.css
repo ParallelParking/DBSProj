@@ -1,0 +1,19 @@
+.reglog{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.reglog button{
+    font-family: Inter, sans-serif;
+    border-radius: 6px;
+    border: none;
+    background-color: #141413;
+    color: #FAFAF8;
+    width: 150px;
+    height: 40px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 50px;
+}

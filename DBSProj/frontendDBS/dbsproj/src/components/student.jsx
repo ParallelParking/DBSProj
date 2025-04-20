@@ -1,18 +1,20 @@
-export default function student({form ,setForm, handleChange}){
-    return(
-        <>
-      <form>
+export default function Student({ form, setForm, handleChange }) {
+  return (
+    <div className="student-form">
+      <label>
         <input
           type="text"
-          placeholder='Reg. No.'
-          aria-label='regno'
-          name='regno'
+          placeholder="Reg. No."
+          aria-label="regno"
+          name="regno"
           value={form.regno || ''}
           onChange={handleChange}
           required
         />
+      </label>
 
-        <p>SC Role (If any)</p>
+      <label>
+        SC Role (If any)
         <select
           name="SCrole"
           value={form.SCrole || 'none'}
@@ -25,8 +27,10 @@ export default function student({form ,setForm, handleChange}){
           <option value="treasurer">Treasurer</option>
           <option value="secretary">Secretary</option>
         </select>
+      </label>
 
-        <p>POC (Person of Contact) for</p>
+      <label>
+        POC (Person of Contact) for
         <select
           name="pocClub"
           value={form.pocClub || ''}
@@ -40,35 +44,43 @@ export default function student({form ,setForm, handleChange}){
           <option value="Tech Council">Tech Council</option>
           <option value="Dance Club">Dance Club</option>
         </select>
+      </label>
 
-        <p>Clubs you're a member of</p>
-        <div className="checkbox-container">
-            {['Astronomy Club', 'LDQ', 'DebSoc', 'Tech Council', 'Dance Club', 'Music Club', 'Drama Club'].map((club) => (
-                <label key={club} className="checkbox-item">
-                <input
-                    type="checkbox"
-                    name="memberClubs"
-                    value={club}
-                    checked={form.memberClubs?.includes(club) || false}
-                    onChange={(e) => {
-                    const value = e.target.value;
-                    setForm((prev) => {
-                        const isChecked = e.target.checked;
-                        const updatedClubs = isChecked
-                        ? [...(prev.memberClubs || []), value]
-                        : (prev.memberClubs || []).filter((c) => c !== value);
-                        return {
-                        ...prev,
-                        memberClubs: updatedClubs
-                        };
-                    });
-                    }}
-                />
-                {club}
-                </label>
-            ))}
-            </div>
-      </form>
-    </>
-    );
+      <label>Clubs you're a member of</label>
+      <div className="checkbox-container">
+        {[
+          'Astronomy Club',
+          'LDQ',
+          'DebSoc',
+          'Tech Council',
+          'Dance Club',
+          'Music Club',
+          'Drama Club',
+        ].map((club) => (
+          <label key={club} className="checkbox-item">
+            <input
+              type="checkbox"
+              name="memberClubs"
+              value={club}
+              checked={form.memberClubs?.includes(club) || false}
+              onChange={(e) => {
+                const value = e.target.value;
+                setForm((prev) => {
+                  const isChecked = e.target.checked;
+                  const updatedClubs = isChecked
+                    ? [...(prev.memberClubs || []), value]
+                    : (prev.memberClubs || []).filter((c) => c !== value);
+                  return {
+                    ...prev,
+                    memberClubs: updatedClubs,
+                  };
+                });
+              }}
+            />
+            {club}
+          </label>
+        ))}
+      </div>
+    </div>
+  );
 }

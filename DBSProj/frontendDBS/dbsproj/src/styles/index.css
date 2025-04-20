@@ -32,22 +32,24 @@ body {
 .container {
   display: flex;
   justify-content: center;
-  align-items: stretch;
+  align-items: center;
+  min-height: 500px;
 }
 
 .left,
 .right {
-  display: flex;
-  flex-direction: column;
   width: 500px;
   max-width: 500px;
+  min-height: 450px;
   height: 450px;
+  overflow-y: auto;
+  box-sizing: border-box;
   border: 1px solid black;
-  padding-left: 100px;
-  padding-top: 30px;
-  border-radius: 0;
-  border-radius: 10px 0 0 10px; /* we'll fix right's radius below */
-  height: auto; /* ← important */
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Individual side rounding */
@@ -61,14 +63,13 @@ body {
 
 /* Shared form styles */
 .left form,
-.right form {
+.right form, .student-form {
   display: flex;
   flex-direction: column;
-  
 }
 
 .left form input,
-.right form input {
+.right form input, .student-form input {
   padding-left: 10px;
   border-radius: 6px;
   border: 1px solid #D1D5DB;
@@ -76,6 +77,7 @@ body {
   max-width: 300px;
   height: 40px;
   margin-bottom: 20px;
+  box-sizing: border-box; /* Added to prevent clipping */
 }
 
 .left form select,
@@ -113,24 +115,70 @@ body {
   width: 250px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .checkbox-item {
   display: flex;
-  align-items: center;
+  align-items: center; /* Ensures checkbox and text are vertically aligned */
   font-size: 14px;
+  gap: 8px;
   line-height: 1;
-  margin: 0;
 }
 
 .checkbox-item input[type="checkbox"] {
   margin: 0;
   margin-right: 6px;
-  vertical-align: middle;
-  transform: scale(0.85); /* optional: smaller checkbox */
+  vertical-align: middle; /* Ensures checkbox is aligned with text */
+  transform: scale(1); /* Adjusted scale for better alignment */
+  accent-color: black;
 }
 
-.checkbox-item input[type="checkbox"]:checked {
-  accent-color: black;  /* Changes the checkbox tick color to black */
+.professor-form,
+.floor-manager-form, .student-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 320px;
+  padding: 30px;
+}
+
+.cul-sel select,
+.club-head select,
+.floor-manager-form select, .student-form select{
+  padding-left: 10px;
+  border-radius: 6px;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  max-width: 300px;
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.student-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 320px;
+  padding: 40px 30px 30px 30px; /* top padding increased */
+}
+
+.student-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  font-weight: 400;
+  gap: 6px;
+}
+
+.student-form input[type="text"],
+.student-form select {
+  padding-left: 10px;
+  border-radius: 6px;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  max-width: 300px;
+  height: 40px;
+  font-size: 14px;
+  box-sizing: border-box; /* Added to prevent clipping */
 }
