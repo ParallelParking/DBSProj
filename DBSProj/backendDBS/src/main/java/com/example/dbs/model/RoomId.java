@@ -27,4 +27,12 @@ public class RoomId implements Serializable {
     public int hashCode() {
         return Objects.hash(block, room);
     }
+
+    public String getBlock() {
+        return block;
+    }
+
+    public String getRoom() {
+        return room;
+    }
 }
