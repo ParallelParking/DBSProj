@@ -1,5 +1,6 @@
 package com.example.dbs.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -12,6 +13,9 @@ public class Users {
     private String email;
     private String name;
     private Long phone;
+
+    @Column(nullable = false)
+    private String password;
 
     public Users(){
     }
@@ -42,5 +46,12 @@ public class Users {
     public String toString() {
         return "User [email=" + email + ", name=" + name + ", phone=" + phone + "]";
     }
-    
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

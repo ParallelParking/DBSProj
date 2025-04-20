@@ -7,14 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.dbs.model.Student;
 import com.example.dbs.model.StudentCouncil;
+import com.example.dbs.model.Users;
 import com.example.dbs.repository.StudentCouncilRepository;
+import com.example.dbs.repository.StudentRepository;
+import com.example.dbs.repository.UserRepository;
 
 @Service
 public class StudentCouncilService {
 
-    @Autowired
-    private StudentCouncilRepository studentCouncilRepository;
+    @Autowired private StudentCouncilRepository studentCouncilRepository;
+    @Autowired private StudentRepository studentRepository;
+    @Autowired private UserRepository userRepository;
 
     public List<StudentCouncil> getAllCouncilMembers() {
         return studentCouncilRepository.findAll();
@@ -46,6 +51,21 @@ public class StudentCouncilService {
         if (member.getPosition() == null || member.getPosition().trim().isEmpty()) {
             throw new IllegalArgumentException("Position cannot be null or empty for Student Council members.");
         }
+
+        Student baseStudent = new Student();
+        baseStudent.setEmail(member.getEmail());
+        baseStudent.setPassword(member.getPassword());
+        baseStudent.setName(member.getName());
+        baseStudent.setPhone(member.getPhone());
+        baseStudent.setRegno(member.getRegno());
+        studentRepository.save(baseStudent);
+
+        Users baseUser = new Users();
+        baseUser.setEmail(member.getEmail());
+        baseUser.setPassword(member.getPassword()); // Assumes password is set and HASHED before calling this
+        baseUser.setName(member.getName());
+        baseUser.setPhone(member.getPhone());
+        userRepository.save(baseUser);
 
         return studentCouncilRepository.save(member);
     }
