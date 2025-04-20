@@ -57,10 +57,16 @@ export default function Student({ form, setForm, handleChange }) {
           'Music Club',
           'Drama Club',
         ].map((club) => (
-          <label key={club} className="checkbox-item">
+          <div className="checkbox-item-cont">
             <input
+            style={{
+              height: "auto",
+              marginBottom: "0"
+            }}
+            className="club-checkbox"
               type="checkbox"
               name="memberClubs"
+              id={club}
               value={club}
               checked={form.memberClubs?.includes(club) || false}
               onChange={(e) => {
@@ -77,8 +83,10 @@ export default function Student({ form, setForm, handleChange }) {
                 });
               }}
             />
-            {club}
-          </label>
+            <label key={club} className="checkbox-item" htmlFor={club}>
+              {club}
+            </label>
+          </div>
         ))}
       </div>
     </div>

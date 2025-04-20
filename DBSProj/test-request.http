@@ -1,10 +1,13 @@
-### POST Request to create a user
-POST http://localhost:8080/api/user
+
+
+POST http://localhost:8080/api/bookings
 Content-Type: application/json
 
 {
-  "email": "john.de@example.com",
-  "name": "John Doe",
-  "phone": 1234567890,
-  "regno": 20220123
+  "block": "A",
+  "roomNo": "101",
+  "dateTime": "2025-04-20T10:00:00",
+  "purpose": "Club Meeting",
+  "studentEmail": "student1@example.com",
+  "clubName": "MusicClub"
 }
