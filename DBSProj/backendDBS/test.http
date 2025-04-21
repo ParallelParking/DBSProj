@@ -1,0 +1,66 @@
+### Register a new Professor
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "newprof@example.com",
+  "password": "securePass!456",
+  "name": "Dr. New Professor",
+  "phone": 9876543210,
+  "userType": "PROFESSOR",
+  "isCultural": false
+}
+
+### Register a new Student
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "newstudent@example.com",
+  "password": "password123",
+  "name": "New Student",
+  "phone": 1234567890,
+  "userType": "STUDENT",
+  "regno": 23100123
+}
+
+
+### Register a new Floor Manager
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "floormanager.a@example.com",
+  "password": "managerPass789",
+  "name": "Floor Manager A Block",
+  "phone": 1122334455,
+  "userType": "FLOOR_MANAGER"
+  // No specific fields needed for FloorManager based on the DTO
+}
+
+### Register a new Student Council Member
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "sc.president@example.com",
+  "password": "councilPass101",
+  "name": "Council President",
+  "phone": 5566778899,
+  "userType": "STUDENT_COUNCIL",
+  "regno": 22100001,
+  "position": "President"
+}
+
+### Attempt Student Registration - Missing Regno (Expect 400 Bad Request)
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "incomplete.student@example.com",
+  "password": "password123",
+  "name": "Incomplete Student",
+  "phone": 1231231234,
+  "userType": "STUDENT"
+  // "regno" is missing
+}
