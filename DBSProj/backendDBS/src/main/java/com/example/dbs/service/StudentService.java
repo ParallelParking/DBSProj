@@ -8,14 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dbs.model.Student;
-import com.example.dbs.model.Users;
 import com.example.dbs.repository.StudentRepository;
-import com.example.dbs.repository.UserRepository;
+// import com.example.dbs.repository.UserRepository;
 
 @Service
 public class StudentService {
 
-    @Autowired private UserRepository userRepository;
+    // @Autowired private UserRepository userRepository;
     @Autowired private StudentRepository studentRepository;
 
     public List<Student> getAllStudents() {
@@ -29,12 +28,12 @@ public class StudentService {
     @Transactional // Ensure atomicity
     public Student createStudent(Student student) {
         // 1. Create and save the base Users entity first
-        Users baseUser = new Users();
-        baseUser.setEmail(student.getEmail());
-        baseUser.setPassword(student.getPassword()); // Assumes password is set and HASHED before calling this
-        baseUser.setName(student.getName());
-        baseUser.setPhone(student.getPhone());
-        userRepository.save(baseUser); // Save the base user
+        // Users baseUser = new Users();
+        // baseUser.setEmail(student.getEmail());
+        // baseUser.setPassword(student.getPassword()); // Assumes password is set and HASHED before calling this
+        // baseUser.setName(student.getName());
+        // baseUser.setPhone(student.getPhone());
+        // userRepository.save(baseUser); // Save the base user
 
         // 2. Save the Student entity (which uses the same email PK)
         // The student object passed in already has all details (email, name, phone, regno, hashed_password)

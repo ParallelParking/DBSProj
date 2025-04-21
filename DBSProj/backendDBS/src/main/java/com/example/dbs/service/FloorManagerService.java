@@ -8,15 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dbs.model.FloorManager;
-import com.example.dbs.model.Users;
 import com.example.dbs.repository.FloorManagerRepository;
-import com.example.dbs.repository.UserRepository;
 
 @Service
 public class FloorManagerService {
 
     @Autowired private FloorManagerRepository floorManagerRepository;
-    @Autowired private UserRepository userRepository;
+    // @Autowired private UserRepository userRepository;
 
     public List<FloorManager> getAllFloorManagers() {
         return floorManagerRepository.findAll();
@@ -29,12 +27,12 @@ public class FloorManagerService {
     @Transactional // Ensure atomicity
     public FloorManager createFloorManager(FloorManager manager) {
         // 1. Create and save the base Users entity first
-        Users baseUser = new Users();
-        baseUser.setEmail(manager.getEmail());
-        baseUser.setPassword(manager.getPassword()); // Assumes password is hashed before calling this
-        baseUser.setName(manager.getName());
-        baseUser.setPhone(manager.getPhone());
-        userRepository.save(baseUser); // Save the base user
+        // Users baseUser = new Users();
+        // baseUser.setEmail(manager.getEmail());
+        // baseUser.setPassword(manager.getPassword()); // Assumes password is hashed before calling this
+        // baseUser.setName(manager.getName());
+        // baseUser.setPhone(manager.getPhone());
+        // userRepository.save(baseUser); // Save the base user
 
         return floorManagerRepository.save(manager);
     }
