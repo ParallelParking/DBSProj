@@ -68,29 +68,69 @@
       }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
     
-      let fullForm = { ...form };
+      let requestBody = {
+        email: form.email,
+        password: form.password,
+        name: form.name,
+        phone: parseInt(form.phone),
+        userType: form.role.toUpperCase(), // converting role to uppercase (e.g., "PROFESSOR")
+      };
     
+      // Add role-specific fields
       switch (form.role) {
         case 'student':
-          fullForm = { ...fullForm, ...studentData };
+          requestBody = {
+            ...requestBody,
+            regno: studentData.regno,
+            SCrole: studentData.SCrole,
+            pocClub: studentData.pocClub,
+            memberClubs: studentData.memberClubs,
+          };
           break;
         case 'professor':
-          fullForm = { ...fullForm, ...professorData };
+          requestBody = {
+            ...requestBody,
+            isCultural: professorData.inCul === 'yes', // assuming 'yes'/'no' in your UI
+            clubHead: professorData.clubHead,
+          };
           break;
         case 'floorManager':
-          fullForm = { ...fullForm, ...floorManagerData };
+          requestBody = {
+            ...requestBody,
+            block: floorManagerData.block,
+          };
           break;
         default:
-          // Optional: handle 'security' or other roles
           break;
       }
     
-      console.log("Form Submitted with values: ", fullForm);
+      try {
+        const response = await fetch('http://localhost:8080/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+    
+        const data = await response.json();
+    
+        if (!response.ok) {
+          throw new Error(data.message || 'Registration failed');
+        }
+    
+        console.log('✅ Registration successful:', data);
+        // Optionally reset the form or show a success message
+      } catch (error) {
+        console.error('❌ Registration error:', error.message);
+        // Show error to user
+      }
     };
     
+   
 
     // Conditional content based on selected role
     const renderRightDivContent = () => {
