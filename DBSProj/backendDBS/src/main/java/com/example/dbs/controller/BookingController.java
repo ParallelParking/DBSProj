@@ -2,7 +2,6 @@ package com.example.dbs.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -11,8 +10,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping; // For cleaner error responses
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable; // For cleaner error responses
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,10 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.dbs.model.Booking;
-import com.example.dbs.model.BookingEquipment;
 import com.example.dbs.model.BookingId;
 import com.example.dbs.service.BookingService;
-import com.example.dbs.service.EquipmentService;
 import com.example.dbs.types.ApprovalRequest;
 import com.example.dbs.types.ApprovalStatus;
 import com.example.dbs.types.BookingRequest;
@@ -34,7 +31,6 @@ import com.example.dbs.types.BookingRequest;
 public class BookingController {
 
     private final BookingService bookingService;
-    @Autowired private EquipmentService equipmentService;
 
     @Autowired
     public BookingController(BookingService bookingService) {
@@ -75,14 +71,6 @@ public class BookingController {
                 request.getDateTime() == null ||
                 request.getStudentEmail() == null || request.getStudentEmail().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("{\"error\": \"Missing required fields: block, roomNo, dateTime, studentEmail.\"}");
-            }
-            // Add basic check for equipment list if needed, e.g., non-empty strings
-            if (request.getRequiredEquipmentTypes() != null) {
-                for (String type : request.getRequiredEquipmentTypes()) {
-                    if (type == null || type.trim().isEmpty()) {
-                        return ResponseEntity.badRequest().body("{\"error\": \"Equipment types cannot be null or empty.\"}");
-                    }
-                }
             }
 
             // Call the service method
@@ -186,82 +174,6 @@ public class BookingController {
             // Generic internal error
             System.err.println("Error submitting approval: " + e.getMessage()); // Replace logging
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal error occurred while submitting approval.", e);
-        }
-    }
-
-    @PostMapping("/{block}/{roomNo}/{dateTime}/equipment")
-    public ResponseEntity<?> addEquipmentToBooking(
-            @PathVariable String block,
-            @PathVariable String roomNo,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
-            @RequestBody Map<String, String> payload) { // Expect {"equipmentType": "TYPE_NAME"}
-
-        BookingId bookingId = bookingService.createBookingId(block, roomNo, dateTime);
-        String equipmentType = payload.get("equipmentType");
-
-        // 1. Validate Input
-        if (equipmentType == null || equipmentType.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"error\": \"equipmentType is required in the request body.\"}");
-        }
-        String normalizedType = equipmentType.trim().toUpperCase(); // Normalize early
-
-        // 2. Optional: Early checks for booking/equipment existence
-        if (bookingService.getBookingById(bookingId).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"Booking not found.\"}");
-        }
-        if (equipmentService.getEquipmentByType(normalizedType).isEmpty()) { // Use injected EquipmentService
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"Equipment type '" + normalizedType + "' not found.\"}");
-        }
-
-        // 3. Call Service
-        try {
-            BookingEquipment createdLink = bookingService.addEquipmentToBooking(bookingId, normalizedType); // Use normalized type
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdLink); // 201 Created
-
-        } catch (NoSuchElementException e) { // Should be caught by early checks if performed
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
-        } catch (IllegalStateException e) { // Already exists
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("{\"error\": \"" + e.getMessage() + "\"}"); // 409 Conflict
-        } catch (Exception e) {
-             System.err.println("Error adding equipment to booking: " + e.getMessage());
-             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                  .body("{\"error\": \"An internal error occurred.\"}");
-        }
-    }
-
-    @DeleteMapping("/{block}/{roomNo}/{dateTime}/equipment/{type}")
-    public ResponseEntity<?> removeEquipmentFromBooking(
-            @PathVariable String block,
-            @PathVariable String roomNo,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
-            @PathVariable String type) {
-
-        BookingId bookingId = bookingService.createBookingId(block, roomNo, dateTime);
-
-        // 1. Validate Input
-        if (type == null || type.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"error\": \"Equipment type must be provided in the path.\"}");
-        }
-        // Check if booking exists first
-        if (bookingService.getBookingById(bookingId).isEmpty()) {
-           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"Booking not found.\"}");
-        }
-
-        // 2. Call Service
-        try {
-            boolean removed = bookingService.removeEquipmentFromBooking(bookingId, type);
-            if (removed) {
-                return ResponseEntity.noContent().build(); // 204 No Content
-            } else {
-                // Equipment was not associated with this booking
-                return ResponseEntity.notFound().build(); // 404 Not Found
-            }
-        } catch (NoSuchElementException e) { // If booking check is added to service
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
-        } catch (Exception e) {
-            System.err.println("Error removing equipment from booking: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body("{\"error\": \"An internal error occurred.\"}");
         }
     }
 }

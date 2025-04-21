@@ -62,10 +62,6 @@ public class Booking {
                 fetch = FetchType.LAZY)
     private Set<BookingApproval> approvals; 
 
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, // Cascade ALL if deleting Booking should delete BookingEquipment
-               orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<BookingEquipment> requiredEquipment;
-
     // Constructors
 
     public Booking() {}
@@ -170,13 +166,5 @@ public class Booking {
 
     public String getClubName() {
         return clubName;
-    }
-
-    public Set<BookingEquipment> getRequiredEquipment() {
-        return requiredEquipment;
-    }
-
-    public void setRequiredEquipment(Set<BookingEquipment> requiredEquipment) {
-        this.requiredEquipment = requiredEquipment;
     }
 }
