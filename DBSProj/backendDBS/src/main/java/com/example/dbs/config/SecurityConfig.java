@@ -19,7 +19,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
 import com.example.dbs.security.JwtRequestFilter;
 
 @Configuration
@@ -43,7 +42,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
-            // Configure CORS if your frontend is on a different origin
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() // Allow auth endpoints
@@ -61,11 +59,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
-    // We won't need this, I don't think, considering our frontend and backend sit in the same repo. I will be leaving it here for posterity though.
-    
-    // Example CORS Configuration Bean (Uncomment and customize if needed)
     
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
