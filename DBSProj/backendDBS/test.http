@@ -1,0 +1,12 @@
+### Register a new Professor
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "newprof@example.com",
+  "password": "securePass!456",
+  "name": "Dr. New Professor",
+  "phone": 9876543210,
+  "userType": "PROFESSOR",
+  "isCultural": false
+}
