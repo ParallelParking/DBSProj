@@ -31,8 +31,8 @@ public class BookingApproval {
     private String block;
     @Column(name = "room_no", insertable = false, updatable = false)
     private String roomNo;
-    @Column(name = "date_time", insertable = false, updatable = false)
-    private LocalDateTime dateTime;
+    @Column(name = "start_time", insertable = false, updatable = false)
+    private LocalDateTime startTime;
 
     @Enumerated(EnumType.STRING)
     private ApproverRole approverRole; // Changed from approverType
@@ -50,7 +50,7 @@ public class BookingApproval {
     @JoinColumns({
         @JoinColumn(name = "block", referencedColumnName = "block"),
         @JoinColumn(name = "room_no", referencedColumnName = "room_no"), 
-        @JoinColumn(name = "date_time", referencedColumnName = "date_time") 
+        @JoinColumn(name = "start_time", referencedColumnName = "start_time") 
     })
     private Booking booking;
 
@@ -60,7 +60,7 @@ public class BookingApproval {
         this.booking = booking;
         this.block = booking.getBlock();
         this.roomNo = booking.getRoomNo();
-        this.dateTime = booking.getDateTime();
+        this.startTime = booking.getStartTime();
         this.approverRole = approverRole;
         this.approverEmail = approverEmail;
         this.approvalStatus = approvalStatus;
@@ -79,8 +79,8 @@ public class BookingApproval {
     public String getRoomNo() { return roomNo; }
     public void setRoomNo(String roomNo) { this.roomNo = roomNo; }
 
-    public LocalDateTime getDateTime() { return dateTime; }
-    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
+    public LocalDateTime getStartTime() { return startTime; }
+    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
 
     public ApproverRole getApproverRole() { return approverRole; }
     public void setApproverRole(ApproverRole approverRole) { this.approverRole = approverRole; }

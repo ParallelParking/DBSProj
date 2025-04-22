@@ -54,8 +54,8 @@ public class BookingService {
     }
 
     // Helper to create BookingId easily
-    public BookingId createBookingId(String block, String roomNo, LocalDateTime dateTime) {
-        return new BookingId(block, roomNo, dateTime);
+    public BookingId createBookingId(String block, String roomNo, LocalDateTime startTime) {
+        return new BookingId(block, roomNo, startTime);
     }
 
     @Transactional
@@ -72,7 +72,7 @@ public class BookingService {
         }
 
         // 2. Check for booking conflict
-        BookingId bookingId = new BookingId(request.getBlock(), request.getRoomNo(), request.getDateTime());
+        BookingId bookingId = new BookingId(request.getBlock(), request.getRoomNo(), request.getStartTime());
         if (bookingRepository.existsById(bookingId)) {
              throw new IllegalStateException("Booking conflict exists for this room and time.");
         }
@@ -81,7 +81,7 @@ public class BookingService {
         Booking newBooking = new Booking();
         newBooking.setBlock(request.getBlock());
         newBooking.setRoomNo(request.getRoomNo());
-        newBooking.setDateTime(request.getDateTime());
+        newBooking.setStartTime(request.getStartTime());
         newBooking.setPurpose(request.getPurpose());
         newBooking.setStudentEmail(request.getStudentEmail());
         newBooking.setClubName(request.getClubName()); // Can be null
@@ -171,7 +171,7 @@ public class BookingService {
     @Transactional // Should be part of the recordApproval transaction
     protected void updateOverallBookingStatus(Booking booking) {
         // Reload booking to ensure we have the latest state within the transaction
-        booking = bookingRepository.findById(new BookingId(booking.getBlock(), booking.getRoomNo(), booking.getDateTime())).orElseThrow();
+        booking = bookingRepository.findById(new BookingId(booking.getBlock(), booking.getRoomNo(), booking.getStartTime())).orElseThrow();
 
         // Find all approvals for this booking
         List<BookingApproval> approvals = bookingApprovalRepository.findByBooking(booking);

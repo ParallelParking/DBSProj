@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class BookingRequest {
     private String block;
     private String roomNo;
-    private LocalDateTime dateTime;
+    private LocalDateTime startTime;
     private String purpose;
     private String studentEmail;
     private String clubName; // Optional
@@ -19,8 +19,8 @@ public class BookingRequest {
     public String getRoomNo() { return roomNo; }
     public void setRoomNo(String roomNo) { this.roomNo = roomNo; }
 
-    public LocalDateTime getDateTime() { return dateTime; }
-    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
+    public LocalDateTime getStartTime() { return startTime; }
+    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
 
     public String getPurpose() { return purpose; }
     public void setPurpose(String purpose) { this.purpose = purpose; }
