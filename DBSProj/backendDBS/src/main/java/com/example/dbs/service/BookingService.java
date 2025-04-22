@@ -1,7 +1,6 @@
 package com.example.dbs.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -15,18 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dbs.model.Booking;
 import com.example.dbs.model.BookingApproval;
-import com.example.dbs.model.BookingEquipment;
-import com.example.dbs.model.BookingEquipmentId;
 import com.example.dbs.model.BookingId;
-import com.example.dbs.model.Equipment;
 import com.example.dbs.model.Professor;
 import com.example.dbs.model.Room;
 import com.example.dbs.model.RoomId;
-import com.example.dbs.repository.BookingApprovalRepository; // For atomic operations
-import com.example.dbs.repository.BookingEquipmentRepository;
-import com.example.dbs.repository.BookingRepository;
+import com.example.dbs.repository.BookingApprovalRepository;
+import com.example.dbs.repository.BookingRepository; // For atomic operations
 import com.example.dbs.repository.ClubRepository;
-import com.example.dbs.repository.EquipmentRepository;
 import com.example.dbs.repository.FloorManagerRepository;
 import com.example.dbs.repository.ProfessorRepository;
 import com.example.dbs.repository.RoomRepository;
@@ -50,8 +44,6 @@ public class BookingService {
     @Autowired private StudentCouncilRepository studentCouncilRepository;
     @Autowired private FloorManagerRepository floorManagerRepository;
     @Autowired private SecurityRepository securityRepository;
-    @Autowired private EquipmentRepository equipmentRepository;
-    @Autowired private BookingEquipmentRepository bookingEquipmentRepository;
 
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
@@ -85,18 +77,6 @@ public class BookingService {
              throw new IllegalStateException("Booking conflict exists for this room and time.");
         }
 
-        // 3. Validate Required Equipment (if provided)
-        List<String> requiredEquipmentTypes = request.getRequiredEquipmentTypes();
-        if (requiredEquipmentTypes != null && !requiredEquipmentTypes.isEmpty()) {
-            for (String type : requiredEquipmentTypes) {
-                 // Normalize type for consistency
-                 String normalizedType = type.trim().toUpperCase();
-                 if (!equipmentRepository.existsById(normalizedType)) {
-                     throw new IllegalArgumentException("Required equipment type '" + normalizedType + "' does not exist.");
-                 }
-            }
-        }
-
         // 4. Create and Save the Booking entity first
         Booking newBooking = new Booking();
         newBooking.setBlock(request.getBlock());
@@ -108,26 +88,6 @@ public class BookingService {
         newBooking.setOverallStatus(BookingStatus.PENDING_APPROVAL);
 
         Booking savedBooking = bookingRepository.save(newBooking);
-
-        // 5. Create and Save BookingEquipment entities
-        if (requiredEquipmentTypes != null && !requiredEquipmentTypes.isEmpty()) {
-            List<BookingEquipment> bookingEquipments = new ArrayList<>();
-            for (String type : requiredEquipmentTypes) {
-                 String normalizedType = type.trim().toUpperCase(); // Use normalized type
-                 BookingEquipment be = new BookingEquipment();
-                 be.setBlock(savedBooking.getBlock());
-                 be.setRoom(savedBooking.getRoomNo()); // Match BookingEquipment field name 'room'
-                 be.setDateTime(savedBooking.getDateTime());
-                 be.setEquipmentType(normalizedType);
-                 // Set the relationship back to the booking (optional but good practice)
-                 // Fetching equipment again is inefficient, we already validated it
-                 Equipment equipRef = equipmentRepository.findById(normalizedType).orElseThrow(); // Should exist
-                 be.setEquipment(equipRef);
-                 be.setBooking(savedBooking);
-                 bookingEquipments.add(be);
-            }
-            bookingEquipmentRepository.saveAll(bookingEquipments);
-        }
 
         return savedBooking; // Return the created booking
     }
@@ -270,64 +230,10 @@ public class BookingService {
         if (bookingRepository.existsById(id)) {
             // 1. Delete associated approvals (handled by cascade on Booking entity)
 
-            // 2. Explicitly delete associated BookingEquipment
-            List<BookingEquipment> equipmentToDelete = bookingEquipmentRepository.findByBlockAndRoomAndDateTime(
-                    id.getBlock(), id.getRoomNo(), id.getDateTime());
-            if (!equipmentToDelete.isEmpty()) {
-                bookingEquipmentRepository.deleteAllInBatch(equipmentToDelete);
-            }
-
             // 3. Delete the booking itself
             bookingRepository.deleteById(id);
             return true;
         }
         return false; // Booking not found
-    }
-
-    @Transactional
-    public BookingEquipment addEquipmentToBooking(BookingId bookingId, String equipmentType) {
-        // 1. Validate Booking exists
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new NoSuchElementException("Booking with ID " + bookingId + " not found.");
-        }
-
-        // 2. Validate Equipment exists (and normalize)
-        String normalizedType = equipmentType.trim().toUpperCase();
-        if (!equipmentRepository.existsById(normalizedType)) {
-            throw new NoSuchElementException("Equipment type '" + normalizedType + "' not found.");
-        }
-
-        // 3. Check if already exists
-        BookingEquipmentId beId = new BookingEquipmentId(bookingId.getBlock(), bookingId.getRoomNo(), bookingId.getDateTime(), normalizedType);
-        if (bookingEquipmentRepository.existsById(beId)) {
-            throw new IllegalStateException("Equipment type '" + normalizedType + "' is already required for this booking.");
-        }
-
-        // 4. Create and save
-        BookingEquipment newBe = new BookingEquipment();
-        newBe.setBlock(bookingId.getBlock());
-        newBe.setRoom(bookingId.getRoomNo()); // Ensure field name matches BookingEquipment entity ('room')
-        newBe.setDateTime(bookingId.getDateTime());
-        newBe.setEquipmentType(normalizedType);
-        // Setting Booking/Equipment references is optional if using insertable/updatable=false
-
-        return bookingEquipmentRepository.save(newBe);
-    }
-
-    @Transactional
-    public boolean removeEquipmentFromBooking(BookingId bookingId, String equipmentType) {
-        // Check if booking exists first for a clearer error,
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new NoSuchElementException("Booking with ID " + bookingId + " not found.");
-        }
-
-        String normalizedType = equipmentType.trim().toUpperCase();
-        BookingEquipmentId beId = new BookingEquipmentId(bookingId.getBlock(), bookingId.getRoomNo(), bookingId.getDateTime(), normalizedType);
-
-        if (bookingEquipmentRepository.existsById(beId)) {
-            bookingEquipmentRepository.deleteById(beId);
-            return true;
-        }
-        return false; // Requirement did not exist
     }
 }
