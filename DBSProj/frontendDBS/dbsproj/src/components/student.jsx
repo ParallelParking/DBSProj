@@ -30,48 +30,12 @@ export default function Student({ form, setForm, handleChange }) {
         />
       </label>
 
-      <label>
-        SC Role (If any)
-        <select
-          name="SCrole"
-          value={form.SCrole || 'none'}
-          onChange={handleChange}
-          required
-        >
-          <option value="none">None</option>
-          <option value="president">President</option>
-          <option value="vicePresident">Vice President</option>
-          <option value="treasurer">Treasurer</option>
-          <option value="secretary">Secretary</option>
-        </select>
-      </label>
-
-      <label>
-        POC (Person of Contact) for
-        <select
-          name="pocClub"
-          value={form.pocClub || ''}
-          onChange={handleChange}
-          required
-        >
-          <option value="">-- Select a club --</option>
-          {availableClubs.map((club) => (
-            <option key={club} value={club}>
-              {club}
-            </option>
-          ))}
-        </select>
-      </label>
-
       <label>Clubs you're a member of</label>
       <div className="checkbox-container">
         {availableClubs.map((club) => (
           <div key={club} className="checkbox-item-cont">
             <input
-              style={{
-                height: "auto",
-                marginBottom: "0"
-              }}
+              style={{ height: "auto", marginBottom: "0" }}
               className="club-checkbox"
               type="checkbox"
               name="memberClubs"
@@ -87,7 +51,7 @@ export default function Student({ form, setForm, handleChange }) {
                     : (prev.memberClubs || []).filter((c) => c !== value);
                   return {
                     ...prev,
-                    memberClubs: updatedClubs
+                    memberClubs: updatedClubs,
                   };
                 });
               }}
