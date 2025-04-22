@@ -1,66 +1,198 @@
-### Register a new Professor
-POST http://localhost:8080/api/auth/register
+### Variables - Adjust if needed
+@baseUrl = http://localhost:8080
+
+# --- Users involved ---
+# Student making the booking (Tech Club POC)
+@studentEmail = poc.student1@example.com
+@studentPassword = studentpass1
+
+# Approver: Floor Manager for AB1/101
+@floorManagerEmail = floor.manager1@example.com
+@floorManagerPassword = managerpass1
+
+# Approver: Club's Faculty Head (Tech Club)
+@clubFacultyHeadEmail = faculty.head1@example.com
+@clubFacultyHeadPassword = profpass1
+
+# Approver: Cultural Professor (Any)
+@culturalProfEmail = faculty.head2@example.com
+@culturalProfPassword = profpass2
+
+# Approver: Student Council Member
+@scMemberEmail = sc.member1.example.com
+@scMemberPassword = scpass1
+
+# Approver: Security Member
+@securityEmail = security1@example.com
+@securityPassword = securitypass1
+
+# --- Booking Details ---
+@bookingBlock = AB1
+@bookingRoom = 101
+# Use a unique future timestamp for the booking
+@bookingDateTime = 2025-10-12T11:00:00
+@bookingClub = Tech Club
+@bookingPurpose = Tech Club - Project Meeting
+
+### 1. Login Student (poc.student1)
+# @name loginStudent
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "newprof@example.com",
-  "password": "securePass!456",
-  "name": "Dr. New Professor",
-  "phone": 9876543210,
-  "userType": "PROFESSOR",
-  "isCultural": false
+  "email": "{{studentEmail}}",
+  "password": "{{studentPassword}}"
 }
+### Store Token
+@studentToken = {{loginStudent.response.body.jwt}}
 
-### Register a new Student
-POST http://localhost:8080/api/auth/register
+### 2. Login Floor Manager (floor.manager1)
+# @name loginFloorManager
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "newstudent@example.com",
-  "password": "password123",
-  "name": "New Student",
-  "phone": 1234567890,
-  "userType": "STUDENT",
-  "regno": 23100123
+  "email": "{{floorManagerEmail}}",
+  "password": "{{floorManagerPassword}}"
 }
+### Store Token
+@floorManagerToken = {{loginFloorManager.response.body.jwt}}
 
-
-### Register a new Floor Manager
-POST http://localhost:8080/api/auth/register
+### 3. Login Club Faculty Head (faculty.head1)
+# @name loginClubFacultyHead
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "floormanager.a@example.com",
-  "password": "managerPass789",
-  "name": "Floor Manager A Block",
-  "phone": 1122334455,
-  "userType": "FLOOR_MANAGER"
-  // No specific fields needed for FloorManager based on the DTO
+  "email": "{{clubFacultyHeadEmail}}",
+  "password": "{{clubFacultyHeadPassword}}"
 }
+### Store Token
+@clubFacultyHeadToken = {{loginClubFacultyHead.response.body.jwt}}
 
-### Register a new Student Council Member
-POST http://localhost:8080/api/auth/register
+### 4. Login Cultural Professor (faculty.head2)
+# @name loginCulturalProf
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "sc.president@example.com",
-  "password": "councilPass101",
-  "name": "Council President",
-  "phone": 5566778899,
-  "userType": "STUDENT_COUNCIL",
-  "regno": 22100001,
-  "position": "President"
+  "email": "{{culturalProfEmail}}",
+  "password": "{{culturalProfPassword}}"
 }
+### Store Token
+@culturalProfToken = {{loginCulturalProf.response.body.jwt}}
 
-### Attempt Student Registration - Missing Regno (Expect 400 Bad Request)
-POST http://localhost:8080/api/auth/register
+### 5. Login Student Council Member (sc.member1)
+# @name loginScMember
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "incomplete.student@example.com",
-  "password": "password123",
-  "name": "Incomplete Student",
-  "phone": 1231231234,
-  "userType": "STUDENT"
-  // "regno" is missing
+  "email": "{{scMemberEmail}}",
+  "password": "{{scMemberPassword}}"
 }
+### Store Token
+@scMemberToken = {{loginScMember.response.body.jwt}}
+
+### 6. Login Security Member (security1)
+# @name loginSecurity
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{securityEmail}}",
+  "password": "{{securityPassword}}"
+}
+### Store Token
+@securityToken = {{loginSecurity.response.body.jwt}}
+
+
+### 7. Create Booking Request (as Student)
+# @name createBooking
+POST {{baseUrl}}/api/bookings
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "block": "{{bookingBlock}}",
+  "roomNo": "{{bookingRoom}}",
+  "dateTime": "{{bookingDateTime}}",
+  "purpose": "{{bookingPurpose}}",
+  "studentEmail": "{{studentEmail}}",
+  "clubName": "{{bookingClub}}"
+}
+# --- Check the response here, initial status should be PENDING ---
+
+
+### 8. Submit Approval - Floor Manager (floor.manager1)
+# @name approveByFloorManager
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+Authorization: Bearer {{floorManagerToken}}
+Content-Type: application/json
+
+{
+  "approverEmail": "{{floorManagerEmail}}",
+  "status": "APPROVED",
+  "comments": "Approved by Floor Manager"
+}
+
+
+### 9. Submit Approval - Club Faculty Head (faculty.head1)
+# @name approveByClubFacultyHead
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+Authorization: Bearer {{clubFacultyHeadToken}}
+Content-Type: application/json
+
+{
+  "approverEmail": "{{clubFacultyHeadEmail}}",
+  "status": "APPROVED",
+  "comments": "Approved by Club Faculty Head"
+}
+
+
+### 10. Submit Approval - Cultural Professor (faculty.head2)
+# @name approveByCulturalProf
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+Authorization: Bearer {{culturalProfToken}}
+Content-Type: application/json
+
+{
+  "approverEmail": "{{culturalProfEmail}}",
+  "status": "APPROVED",
+  "comments": "Approved by Cultural Professor"
+}
+
+
+### 11. Submit Approval - Student Council (sc.member1)
+# @name approveByScMember
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+Authorization: Bearer {{scMemberToken}}
+Content-Type: application/json
+
+{
+  "approverEmail": "{{scMemberEmail}}",
+  "status": "APPROVED",
+  "comments": "Approved by Student Council"
+}
+
+
+### 12. Submit Approval - Security (security1)
+# @name approveBySecurity
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+Authorization: Bearer {{securityToken}}
+Content-Type: application/json
+
+{
+  "approverEmail": "{{securityEmail}}",
+  "status": "APPROVED",
+  "comments": "Approved by Security"
+}
+# --- After this final approval, the booking's overallStatus should change to APPROVED ---
+
+
+### 13. Verify Final Booking Status (as Student)
+# Check if overallStatus is "APPROVED" in the response body
+# @name verifyBooking
+GET {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}
+Authorization: Bearer {{studentToken}}
+

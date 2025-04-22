@@ -18,11 +18,11 @@ public class Club {
     @Column(name = "faculty_head_email", unique = true)
     private String facultyHeadEmail; 
 
-    @OneToOne(fetch = FetchType.LAZY) 
+    @OneToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "poc_student_email", referencedColumnName = "email", insertable = false, updatable = false, unique = true) 
     private Student pocStudent;
 
-    @OneToOne(fetch = FetchType.LAZY) 
+    @OneToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "faculty_head_email", referencedColumnName = "email", insertable = false, updatable = false, unique = true) 
     private Professor facultyHead;
 

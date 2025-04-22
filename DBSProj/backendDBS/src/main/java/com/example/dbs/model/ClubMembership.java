@@ -2,10 +2,11 @@ package com.example.dbs.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @IdClass(ClubMembershipId.class)
@@ -19,11 +20,11 @@ public class ClubMembership {
     @Column(name="club_name")
     private String clubName;  // club name (FK to Club)
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stu_email", referencedColumnName = "email", insertable = false, updatable = false)
     private Student student;  // relationship to Student
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "club_name", referencedColumnName = "name", insertable = false, updatable = false)
     private Club club;  // relationship to Club
 
