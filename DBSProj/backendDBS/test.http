@@ -30,7 +30,9 @@
 @bookingBlock = AB1
 @bookingRoom = 101
 # Use a unique future timestamp for the booking
-@bookingDateTime = 2025-10-12T11:00:00
+@bookingStartTime = 2025-11-15T14:00:00
+@bookingEndTime = 2025-11-15T16:00:00 
+
 @bookingClub = Tech Club
 @bookingPurpose = Tech Club - Project Meeting
 
@@ -116,7 +118,8 @@ Content-Type: application/json
 {
   "block": "{{bookingBlock}}",
   "roomNo": "{{bookingRoom}}",
-  "dateTime": "{{bookingDateTime}}",
+  "startTime": "{{bookingStartTime}}",
+  "endTime": "{{bookingEndTime}}",  
   "purpose": "{{bookingPurpose}}",
   "studentEmail": "{{studentEmail}}",
   "clubName": "{{bookingClub}}"
@@ -126,7 +129,7 @@ Content-Type: application/json
 
 ### 8. Submit Approval - Floor Manager (floor.manager1)
 # @name approveByFloorManager
-POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingStartTime}}/approvals
 Authorization: Bearer {{floorManagerToken}}
 Content-Type: application/json
 
@@ -139,7 +142,7 @@ Content-Type: application/json
 
 ### 9. Submit Approval - Club Faculty Head (faculty.head1)
 # @name approveByClubFacultyHead
-POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingStartTime}}/approvals
 Authorization: Bearer {{clubFacultyHeadToken}}
 Content-Type: application/json
 
@@ -152,7 +155,7 @@ Content-Type: application/json
 
 ### 10. Submit Approval - Cultural Professor (faculty.head2)
 # @name approveByCulturalProf
-POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingStartTime}}/approvals
 Authorization: Bearer {{culturalProfToken}}
 Content-Type: application/json
 
@@ -165,7 +168,7 @@ Content-Type: application/json
 
 ### 11. Submit Approval - Student Council (sc.member1)
 # @name approveByScMember
-POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingStartTime}}/approvals
 Authorization: Bearer {{scMemberToken}}
 Content-Type: application/json
 
@@ -178,7 +181,7 @@ Content-Type: application/json
 
 ### 12. Submit Approval - Security (security1)
 # @name approveBySecurity
-POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}/approvals
+POST {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingStartTime}}/approvals
 Authorization: Bearer {{securityToken}}
 Content-Type: application/json
 
@@ -193,6 +196,6 @@ Content-Type: application/json
 ### 13. Verify Final Booking Status (as Student)
 # Check if overallStatus is "APPROVED" in the response body
 # @name verifyBooking
-GET {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingDateTime}}
+GET {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingStartTime}}
 Authorization: Bearer {{studentToken}}
 

@@ -9,14 +9,14 @@ import java.util.Objects;
 public class BookingId implements Serializable {
     private String block;
     private String roomNo;
-    private LocalDateTime dateTime;
+    private LocalDateTime startTime;
 
     public BookingId() {}
 
-    public BookingId(String block, String roomNo, LocalDateTime dateTime) {
+    public BookingId(String block, String roomNo, LocalDateTime startTime) {
         this.block = block;
         this.roomNo = roomNo;
-        this.dateTime = dateTime;
+        this.startTime = startTime;
     }
 
     @Override
@@ -26,12 +26,12 @@ public class BookingId implements Serializable {
         BookingId that = (BookingId) o;
         return Objects.equals(block, that.block) &&
                Objects.equals(roomNo, that.roomNo) &&
-               Objects.equals(dateTime, that.dateTime);
+               Objects.equals(startTime, that.startTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(block, roomNo, dateTime);
+        return Objects.hash(block, roomNo, startTime);
     }
 
     public String getBlock() {
@@ -50,12 +50,12 @@ public class BookingId implements Serializable {
         this.roomNo = roomNo;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
 }

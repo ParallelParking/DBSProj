@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable; // For cleaner error responses
@@ -26,8 +27,11 @@ import com.example.dbs.types.ApprovalRequest;
 import com.example.dbs.types.ApprovalStatus;
 import com.example.dbs.types.BookingRequest;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/bookings") // Base path for booking-related endpoints
+@Validated
 public class BookingController {
 
     private final BookingService bookingService;
@@ -43,14 +47,14 @@ public class BookingController {
         return bookingService.getAllBookings();
     }
 
-    // GET /api/bookings/{block}/{roomNo}/{dateTime} - Retrieve a single booking by composite ID
-    @GetMapping("/{block}/{roomNo}/{dateTime}")
+    // GET /api/bookings/{block}/{roomNo}/{startTime} - Retrieve a single booking by composite ID
+    @GetMapping("/{block}/{roomNo}/{startTime}")
     public ResponseEntity<Booking> getBookingById(
             @PathVariable String block,
             @PathVariable String roomNo,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime) {
 
-        BookingId id = bookingService.createBookingId(block, roomNo, dateTime);
+        BookingId id = bookingService.createBookingId(block, roomNo, startTime);
         Optional<Booking> bookingOptional = bookingService.getBookingById(id);
 
         // If using LAZY fetch for BookingEquipment in Booking entity, it won't be loaded here.
@@ -63,14 +67,14 @@ public class BookingController {
 
     // POST /api/bookings - Create a new booking
     @PostMapping
-    public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) { // Use BookingRequest DTO
+    public ResponseEntity<?> createBooking(@Valid @RequestBody BookingRequest request) { // Use BookingRequest DTO
         try {
             // Basic input validation
             if (request.getBlock() == null || request.getBlock().trim().isEmpty() ||
                 request.getRoomNo() == null || request.getRoomNo().trim().isEmpty() ||
-                request.getDateTime() == null ||
+                request.getStartTime() == null ||
                 request.getStudentEmail() == null || request.getStudentEmail().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body("{\"error\": \"Missing required fields: block, roomNo, dateTime, studentEmail.\"}");
+                return ResponseEntity.badRequest().body("{\"error\": \"Missing required fields: block, roomNo, startTime, studentEmail.\"}");
             }
 
             // Call the service method
@@ -90,15 +94,15 @@ public class BookingController {
         }
     }
 
-    // PUT /api/bookings/{block}/{roomNo}/{dateTime}/purpose - Update booking purpose (example update)
-    @PutMapping("/{block}/{roomNo}/{dateTime}/purpose")
+    // PUT /api/bookings/{block}/{roomNo}/{startTime}/purpose - Update booking purpose (example update)
+    @PutMapping("/{block}/{roomNo}/{startTime}/purpose")
     public ResponseEntity<?> updateBookingPurpose(
             @PathVariable String block,
             @PathVariable String roomNo,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestBody String newPurpose) { // Assuming the body just contains the new purpose string
 
-        BookingId id = bookingService.createBookingId(block, roomNo, dateTime);
+        BookingId id = bookingService.createBookingId(block, roomNo, startTime);
         try {
             Optional<Booking> updatedBooking = bookingService.updateBookingPurpose(id, newPurpose);
             return updatedBooking.map(ResponseEntity::ok) // 200 OK with updated booking
@@ -111,14 +115,14 @@ public class BookingController {
     }
 
 
-    // DELETE /api/bookings/{block}/{roomNo}/{dateTime} - Delete a booking by composite ID
-    @DeleteMapping("/{block}/{roomNo}/{dateTime}")
+    // DELETE /api/bookings/{block}/{roomNo}/{startTime} - Delete a booking by composite ID
+    @DeleteMapping("/{block}/{roomNo}/{startTime}")
     public ResponseEntity<Void> deleteBooking(
             @PathVariable String block,
             @PathVariable String roomNo,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime) {
 
-        BookingId id = bookingService.createBookingId(block, roomNo, dateTime);
+        BookingId id = bookingService.createBookingId(block, roomNo, startTime);
         boolean deleted = bookingService.deleteBooking(id);
 
         if (deleted) {
@@ -128,14 +132,14 @@ public class BookingController {
         }
     }
 
-    @PostMapping("/{block}/{roomNo}/{dateTime}/approvals")
+    @PostMapping("/{block}/{roomNo}/{startTime}/approvals")
     public ResponseEntity<?> submitApproval(
             @PathVariable String block,
             @PathVariable String roomNo,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestBody ApprovalRequest approvalRequest) { // Use the DTO
 
-        BookingId bookingId = bookingService.createBookingId(block, roomNo, dateTime);
+        BookingId bookingId = bookingService.createBookingId(block, roomNo, startTime);
 
         String approverEmail = approvalRequest.getApproverEmail();
         if (approverEmail == null || approverEmail.trim().isEmpty()) {

@@ -30,8 +30,11 @@ public class Booking {
     private String roomNo;
 
     @Id
-    @Column(name = "date_time") // explicitly specify column name
-    private LocalDateTime dateTime;
+    @Column(name = "start_time") // explicitly specify column name
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time", nullable = false)
+    private LocalDateTime endTime;
 
     private String purpose;
 
@@ -66,11 +69,12 @@ public class Booking {
 
     public Booking() {}
 
-    public Booking(String block, String roomNo, LocalDateTime dateTime, String purpose
+    public Booking(String block, String roomNo, LocalDateTime startTime, LocalDateTime endTime, String purpose
         , Room room, Student student, Club club) {
         this.block = block;
         this.roomNo = roomNo;
-        this.dateTime = dateTime;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.purpose = purpose;
         this.room = room;
         this.student = student;
@@ -112,12 +116,20 @@ public class Booking {
         this.roomNo = roomNo;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public String getPurpose() {
