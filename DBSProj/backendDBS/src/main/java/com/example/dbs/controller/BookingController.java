@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable; // For cleaner error responses
@@ -26,8 +27,11 @@ import com.example.dbs.types.ApprovalRequest;
 import com.example.dbs.types.ApprovalStatus;
 import com.example.dbs.types.BookingRequest;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/bookings") // Base path for booking-related endpoints
+@Validated
 public class BookingController {
 
     private final BookingService bookingService;
@@ -63,7 +67,7 @@ public class BookingController {
 
     // POST /api/bookings - Create a new booking
     @PostMapping
-    public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) { // Use BookingRequest DTO
+    public ResponseEntity<?> createBooking(@Valid @RequestBody BookingRequest request) { // Use BookingRequest DTO
         try {
             // Basic input validation
             if (request.getBlock() == null || request.getBlock().trim().isEmpty() ||
