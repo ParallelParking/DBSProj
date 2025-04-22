@@ -49,6 +49,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()  // Public auth endpoints (login/register)
                 .requestMatchers(HttpMethod.GET, "/api/clubs/**").permitAll()  // Public GET for clubs
                 .requestMatchers(HttpMethod.POST, "/api/memberships").permitAll() // ✅ allow membership registration
+                .requestMatchers(HttpMethod.GET, "/api/memberships/student/**").hasRole("STUDENT") // Add this
+                .requestMatchers(HttpMethod.GET, "/api/rooms").hasRole("STUDENT") 
                 .requestMatchers("/api/public/**").permitAll() // Any other public APIs
                 .requestMatchers("/api/**").authenticated()   // All other /api endpoints require auth
                 .anyRequest().permitAll()                     // Allow everything else (e.g. static resources)
@@ -62,9 +64,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // React dev server
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", 
+                                                "http://localhost:3000",
+                                                "http://localhost:8080")); // React dev server
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
         config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        config.setExposedHeaders(Arrays.asList("Authorization"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
