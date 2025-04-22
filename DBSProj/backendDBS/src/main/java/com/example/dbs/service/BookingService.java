@@ -20,6 +20,7 @@ import com.example.dbs.model.Room;
 import com.example.dbs.model.RoomId;
 import com.example.dbs.repository.BookingApprovalRepository;
 import com.example.dbs.repository.BookingRepository; // For atomic operations
+import com.example.dbs.repository.ClubMembershipRepository;
 import com.example.dbs.repository.ClubRepository;
 import com.example.dbs.repository.FloorManagerRepository;
 import com.example.dbs.repository.ProfessorRepository;
@@ -44,6 +45,7 @@ public class BookingService {
     @Autowired private StudentCouncilRepository studentCouncilRepository;
     @Autowired private FloorManagerRepository floorManagerRepository;
     @Autowired private SecurityRepository securityRepository;
+    @Autowired private ClubMembershipRepository clubMembershipRepository;
 
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
@@ -60,6 +62,14 @@ public class BookingService {
 
     @Transactional
     public Booking createBooking(BookingRequest request) { // Accept DTO
+        // 1. Validate startTime vs endTime 
+        if (!request.getEndTime().isAfter(request.getStartTime())) {
+            throw new IllegalArgumentException("Booking end time must be after start time.");
+        }
+        // Basic duration check (e.g., prevent zero duration bookings)
+        if (request.getStartTime().equals(request.getEndTime())) {
+             throw new IllegalArgumentException("Booking start and end times cannot be the same.");
+        }
         // 1. Validate Room, Student, Club (if provided)
         if (!roomRepository.existsById(new RoomId(request.getBlock(), request.getRoomNo()))) {
              throw new IllegalArgumentException("Room does not exist.");
@@ -71,17 +81,34 @@ public class BookingService {
              throw new IllegalArgumentException("Club does not exist.");
         }
 
-        // 2. Check for booking conflict
-        BookingId bookingId = new BookingId(request.getBlock(), request.getRoomNo(), request.getStartTime());
-        if (bookingRepository.existsById(bookingId)) {
-             throw new IllegalStateException("Booking conflict exists for this room and time.");
+        // Ensure student belongs to club
+        if (!clubMembershipRepository.existsByStuEmailAndClubName(request.getStudentEmail(), request.getClubName())) {
+            throw new IllegalArgumentException("Student does not belong to club");
         }
+
+        // 2. Check for booking conflict
+        List<Booking> conflictingBookings = bookingRepository.findConflictingBookings(
+                request.getBlock(),
+                request.getRoomNo(),
+                request.getStartTime(),
+                request.getEndTime()
+        );
+
+        if (!conflictingBookings.isEmpty()) {
+            String conflicts = conflictingBookings.stream()
+                .map(b -> String.format("Conflict with booking from %s to %s", b.getStartTime(), b.getEndTime()))
+                .collect(Collectors.joining(", "));
+             throw new IllegalStateException("Time slot conflict for room " + request.getBlock() + "/" + request.getRoomNo() +
+                                            " between " + request.getStartTime() + " and " + request.getEndTime() + ". " + conflicts);
+        }
+
 
         // 4. Create and Save the Booking entity first
         Booking newBooking = new Booking();
         newBooking.setBlock(request.getBlock());
         newBooking.setRoomNo(request.getRoomNo());
         newBooking.setStartTime(request.getStartTime());
+        newBooking.setEndTime(request.getEndTime());
         newBooking.setPurpose(request.getPurpose());
         newBooking.setStudentEmail(request.getStudentEmail());
         newBooking.setClubName(request.getClubName()); // Can be null
