@@ -1,4 +1,6 @@
-package com.example.dbs.config; // Or another appropriate package
+package com.example.dbs.config;
+
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -7,10 +9,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dbs.model.Club;
+import com.example.dbs.model.ClubMembership;
+import com.example.dbs.model.FloorManager;
 import com.example.dbs.model.Professor;
+import com.example.dbs.model.Room;
+import com.example.dbs.model.Security;
 import com.example.dbs.model.Student;
+import com.example.dbs.model.StudentCouncil;
+import com.example.dbs.repository.ClubMembershipRepository;
 import com.example.dbs.repository.ClubRepository;
+import com.example.dbs.repository.FloorManagerRepository;
 import com.example.dbs.repository.ProfessorRepository;
+import com.example.dbs.repository.RoomRepository;
+import com.example.dbs.repository.SecurityRepository;
+import com.example.dbs.repository.StudentCouncilRepository;
 import com.example.dbs.repository.StudentRepository;
 import com.example.dbs.repository.UserRepository;
 
@@ -22,7 +34,12 @@ public class DataLoader implements CommandLineRunner {
     @Autowired private ProfessorRepository professorRepository;
     @Autowired private ClubRepository clubRepository;
     @Autowired private PasswordEncoder passwordEncoder;
-
+    @Autowired private ClubMembershipRepository clubMembershipRepository;
+    @Autowired private FloorManagerRepository floorManagerRepository;
+    @Autowired private RoomRepository roomRepository;
+    @Autowired private StudentCouncilRepository studentCouncilRepository;
+    @Autowired private SecurityRepository securityRepository;
+    
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -31,6 +48,7 @@ public class DataLoader implements CommandLineRunner {
         // Use checks to avoid recreating data if it already exists
         if (userRepository.count() == 0) { // Example check: only load if users table is empty
             loadUsersAndRoles();
+            loadRooms();
             loadClubs();
             // Add calls to load other data as needed
             System.out.println("Initial data loaded.");
@@ -74,8 +92,113 @@ public class DataLoader implements CommandLineRunner {
         prof2.setIsCultural(true); // Example value
         professorRepository.save(prof2);
 
-        // Add more users (FloorManager, Security, StudentCouncil) as needed...
-         System.out.println("Loaded sample students and professors.");
+        // --- create  floor managers ---
+        FloorManager manager1 = new FloorManager();
+        manager1.setEmail("floor.manager1@example.com");
+        manager1.setPassword(passwordEncoder.encode("managerpass1"));
+        manager1.setName("Floor Manager One");
+        manager1.setPhone(4445556661L);
+        floorManagerRepository.save(manager1);
+
+        FloorManager manager2 = new FloorManager();
+        manager2.setEmail("floor.manager2@example.com");
+        manager2.setPassword(passwordEncoder.encode("managerpass2"));
+        manager2.setName("Floor Manager Two");
+        manager2.setPhone(4445556662L);
+        floorManagerRepository.save(manager2);
+
+        FloorManager manager3 = new FloorManager();
+        manager3.setEmail("floor.manager3@example.com");
+        manager3.setPassword(passwordEncoder.encode("managerpass3"));
+        manager3.setName("Floor Manager Three");
+        manager3.setPhone(4445556663L);
+        floorManagerRepository.save(manager3);
+
+        FloorManager manager4 = new FloorManager();
+        manager4.setEmail("floor.manager4@example.com");
+        manager4.setPassword(passwordEncoder.encode("managerpass4"));
+        manager4.setName("Floor Manager Four");
+        manager4.setPhone(4445556664L);
+        floorManagerRepository.save(manager4);
+
+        FloorManager manager5 = new FloorManager();
+        manager5.setEmail("floor.manager5@example.com");
+        manager5.setPassword(passwordEncoder.encode("managerpass5"));
+        manager5.setName("Floor Manager Five");
+        manager5.setPhone(4445556665L);
+        floorManagerRepository.save(manager5);
+
+        // --- create SC member ---
+        StudentCouncil member = new StudentCouncil();
+        member.setEmail("sc.member1.example.com");
+        member.setPassword(passwordEncoder.encode("scpass1"));
+        member.setName("Student President");
+        member.setPhone(1234567890L);
+        member.setPosition("PRESIDENT");
+        member.setRegno(Long.valueOf(23100103));
+        studentCouncilRepository.save(member);
+
+        // --- create security dude ---
+        Security security = new Security();
+        security.setEmail("security1@example.com");
+        security.setPassword(passwordEncoder.encode("securitypass1"));
+        security.setName("Security One");
+        security.setPhone(0000000000L);
+        securityRepository.save(security);
+
+        System.out.println("Loaded sample users.");
+    }
+
+    private void loadRooms() {
+        Room room1_1 = new Room();
+        room1_1.setBlock("AB1");
+        room1_1.setRoom("101");
+        Optional<FloorManager> manager1Optional = floorManagerRepository.findByEmail("floor.manager1@example.com");
+        if (!manager1Optional.isEmpty()) {
+            FloorManager manager1 = manager1Optional.get();
+            room1_1.setManager(manager1);
+            roomRepository.save(room1_1);
+        }
+
+        Room room2_1 = new Room();
+        room2_1.setBlock("AB2");
+        room2_1.setRoom("101");
+        Optional<FloorManager> manager2Optional = floorManagerRepository.findByEmail("floor.manager2@example.com");
+        if (!manager2Optional.isEmpty()) {
+            FloorManager manager2 = manager2Optional.get();
+            room2_1.setManager(manager2);
+            roomRepository.save(room2_1);
+        }
+
+        Room room3_1 = new Room();
+        room3_1.setBlock("AB3");
+        room3_1.setRoom("101");
+        Optional<FloorManager> manager3Optional = floorManagerRepository.findByEmail("floor.manager3@example.com");
+        if (!manager3Optional.isEmpty()) {
+            FloorManager manager3 = manager3Optional.get();
+            room3_1.setManager(manager3);
+            roomRepository.save(room3_1);
+        }
+
+        Room room4_1 = new Room();
+        room4_1.setBlock("AB4");
+        room4_1.setRoom("101");
+        Optional<FloorManager> manager4Optional = floorManagerRepository.findByEmail("floor.manager4@example.com");
+        if (!manager4Optional.isEmpty()) {
+            FloorManager manager4 = manager4Optional.get();
+            room4_1.setManager(manager4);
+            roomRepository.save(room4_1);
+        }
+
+        Room room5_1 = new Room();
+        room5_1.setBlock("AB5");
+        room5_1.setRoom("101");
+        Optional<FloorManager> manager5Optional = floorManagerRepository.findByEmail("floor.manager5@example.com");
+        if (!manager5Optional.isEmpty()) {
+            FloorManager manager5 = manager5Optional.get();
+            room5_1.setManager(manager5);
+            roomRepository.save(room5_1);
+        }
     }
 
     private void loadClubs() {
@@ -86,6 +209,11 @@ public class DataLoader implements CommandLineRunner {
             club1.setPocStudentEmail("poc.student1@example.com");
             club1.setFacultyHeadEmail("faculty.head1@example.com");
             clubRepository.save(club1);
+
+            ClubMembership membership1 = new ClubMembership();
+            membership1.setStuEmail("poc.student1@example.com");
+            membership1.setClubName(club1.getName());
+            clubMembershipRepository.save(membership1);
         } else {
              System.err.println("Could not create 'Tech Club' because prerequisite users do not exist.");
         }
@@ -97,6 +225,11 @@ public class DataLoader implements CommandLineRunner {
             club2.setPocStudentEmail("poc.student2@example.com");
             club2.setFacultyHeadEmail("faculty.head2@example.com");
             clubRepository.save(club2);
+
+            ClubMembership membership2 = new ClubMembership();
+            membership2.setStuEmail("poc.student2@example.com");
+            membership2.setClubName(club2.getName());
+            clubMembershipRepository.save(membership2);
         } else {
             System.err.println("Could not create 'Music Club' because prerequisite users do not exist.");
         }

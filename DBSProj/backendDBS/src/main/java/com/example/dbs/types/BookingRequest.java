@@ -1,7 +1,6 @@
 package com.example.dbs.types;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 // DTO for creating a booking, including required equipment
 public class BookingRequest {
@@ -11,8 +10,6 @@ public class BookingRequest {
     private String purpose;
     private String studentEmail;
     private String clubName; // Optional
-
-    private List<String> requiredEquipmentTypes;
 
     public BookingRequest() {}
 
@@ -33,7 +30,4 @@ public class BookingRequest {
 
     public String getClubName() { return clubName; }
     public void setClubName(String clubName) { this.clubName = clubName; }
-
-    public List<String> getRequiredEquipmentTypes() { return requiredEquipmentTypes; }
-    public void setRequiredEquipmentTypes(List<String> requiredEquipmentTypes) { this.requiredEquipmentTypes = requiredEquipmentTypes; }
 }
