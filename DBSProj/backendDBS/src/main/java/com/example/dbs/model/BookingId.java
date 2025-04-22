@@ -4,19 +4,27 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+
 
 
 public class BookingId implements Serializable {
+    @Column(name = "block_id", nullable = false)
     private String block;
+
+    @Column(name = "room_no", nullable = false)
     private String roomNo;
-    private LocalDateTime dateTime;
+
+    // *** CHANGE: Renamed from startTime to startTime ***
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
 
     public BookingId() {}
 
-    public BookingId(String block, String roomNo, LocalDateTime dateTime) {
+    public BookingId(String block, String roomNo, LocalDateTime startTime) {
         this.block = block;
         this.roomNo = roomNo;
-        this.dateTime = dateTime;
+        this.startTime = startTime;
     }
 
     @Override
@@ -26,12 +34,12 @@ public class BookingId implements Serializable {
         BookingId that = (BookingId) o;
         return Objects.equals(block, that.block) &&
                Objects.equals(roomNo, that.roomNo) &&
-               Objects.equals(dateTime, that.dateTime);
+               Objects.equals(startTime, that.startTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(block, roomNo, dateTime);
+        return Objects.hash(block, roomNo, startTime);
     }
 
     public String getBlock() {
@@ -50,12 +58,12 @@ public class BookingId implements Serializable {
         this.roomNo = roomNo;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
 }
