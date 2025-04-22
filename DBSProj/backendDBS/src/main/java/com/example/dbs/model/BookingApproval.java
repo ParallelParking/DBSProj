@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.example.dbs.types.ApprovalStatus;
 import com.example.dbs.types.ApproverRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,7 +45,8 @@ public class BookingApproval {
     private LocalDateTime approvalTime;
     private String comments;
 
-    @ManyToOne(fetch = FetchType.LAZY) 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumns({
         @JoinColumn(name = "block", referencedColumnName = "block"),
         @JoinColumn(name = "room_no", referencedColumnName = "room_no"), 

@@ -1,6 +1,11 @@
 package com.example.dbs.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @IdClass(RoomId.class) //composite PK (block + room)
@@ -12,7 +17,7 @@ public class Room {
     @Id
     private String room;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manager_email", referencedColumnName = "email")
     private FloorManager manager;
 

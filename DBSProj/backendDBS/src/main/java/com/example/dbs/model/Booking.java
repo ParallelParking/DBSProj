@@ -43,23 +43,23 @@ public class Booking {
     @Column(name="club_name")
     private String clubName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "block", referencedColumnName = "block", insertable = false, updatable = false),
         @JoinColumn(name = "room_no", referencedColumnName = "room", insertable = false, updatable = false)
     })
     private Room room;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_email", referencedColumnName = "email", insertable = false, updatable = false)
     private Student student;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "club_name", referencedColumnName = "name", insertable = false, updatable = false)
     private Club club;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true, 
-                fetch = FetchType.LAZY)
+                fetch = FetchType.EAGER)
     private Set<BookingApproval> approvals; 
 
     // Constructors
