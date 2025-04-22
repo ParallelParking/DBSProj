@@ -165,6 +165,11 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.email());
         final String jwt = jwtUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        String role = userDetails.getAuthorities().toArray()[0].toString(); // Assuming single role per user
+
+        // Create response including JWT and the user role
+        AuthenticationResponse response = new AuthenticationResponse(jwt, role);
+
+        return ResponseEntity.ok(response);
     }
 }
