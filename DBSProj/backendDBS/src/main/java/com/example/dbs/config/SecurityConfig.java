@@ -48,6 +48,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()  // Public auth endpoints (login/register)
                 .requestMatchers(HttpMethod.GET, "/api/clubs/**").permitAll()  // Public GET for clubs
+                .requestMatchers(HttpMethod.POST, "/api/memberships").permitAll() // ✅ allow membership registration
                 .requestMatchers("/api/public/**").permitAll() // Any other public APIs
                 .requestMatchers("/api/**").authenticated()   // All other /api endpoints require auth
                 .anyRequest().permitAll()                     // Allow everything else (e.g. static resources)
