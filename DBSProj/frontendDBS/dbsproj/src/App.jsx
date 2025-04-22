@@ -7,6 +7,8 @@ import ProfessorDashboard from './dashboards/profDash';
 import FloorManagerDashboard from './dashboards/floorMgrDash';
 import SecurityDashboard from './dashboards/securityDash';
 import StudentCouncilDashboard from './dashboards/scDash';
+import StudentView from './dashboards/studentView';
+import StudentBook from './dashboards/studentBook';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/floor-manager-dashboard" element={<FloorManagerDashboard />} />
         <Route path="/security-dashboard" element={<SecurityDashboard />} />
         <Route path="/student-council-dashboard" element={<StudentCouncilDashboard />} />
+        <Route path="/student-view" element={<StudentView />} />
+        <Route path="/student-book" element={<StudentBook />} />
       </Routes>
     </Router>
   );

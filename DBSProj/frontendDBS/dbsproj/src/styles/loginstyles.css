@@ -34,3 +34,23 @@
     margin-bottom: 10px;
     font-size: 0.9rem;
 }
+
+.stu-dashboard{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.buttons-container button{
+    font-family: Inter, sans-serif;
+    border-radius: 6px;
+    border: none;
+    background-color: #141413;
+    color: #FAFAF8;
+    width: 300px;
+    height: 300px;
+    font-size: 1.0rem;
+    font-weight: 500;
+    margin: 10px;
+}

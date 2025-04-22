@@ -29,6 +29,10 @@ function Login() {
       if (response.ok) {
         localStorage.setItem('jwt', data.jwt);
         localStorage.setItem('role', data.role);
+        localStorage.setItem('email', email); // Store email in localStorage
+    
+        const storedEmail = localStorage.getItem('email');
+
 
         // Clear error on successful login
         setLoginError('');
