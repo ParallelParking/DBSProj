@@ -56,12 +56,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         // Check each role table using the email (which is the PK for role entities)
-        if (studentRepository.existsById(email)) {
+        if (studentCouncilRepository.existsById(email)) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT_COUNCIL"));
+        } else if (studentRepository.existsById(email)) {
             authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-            // Check if also Student Council
-            if (studentCouncilRepository.existsById(email)) {
-                 authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT_COUNCIL"));
-            }
+            // Check if also Student Council SEE ABOVE
         } else if (professorRepository.existsById(email)) {
             authorities.add(new SimpleGrantedAuthority("ROLE_PROFESSOR"));
         } else if (floorManagerRepository.existsById(email)) {
