@@ -130,7 +130,7 @@ public class DataLoader implements CommandLineRunner {
 
         // --- create SC member ---
         StudentCouncil member = new StudentCouncil();
-        member.setEmail("sc.member1.example.com");
+        member.setEmail("sc.member1@example.com");
         member.setPassword(passwordEncoder.encode("scpass1"));
         member.setName("Student President");
         member.setPhone(1234567890L);

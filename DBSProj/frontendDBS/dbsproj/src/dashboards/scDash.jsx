@@ -1,5 +1,151 @@
-export default function scDash(){
-    return(
-        <p>this is sc dash</p>
-    );
-}
+import React, { useEffect, useState } from 'react';
+import Header from '../components/header';
+import '../styles/index.css';
+
+const ScDash = () => {
+  const [bookings, setBookings] = useState([]);
+  const [comments, setComments] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const token = localStorage.getItem('jwt');
+  const userEmail = localStorage.getItem('email');
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/bookings', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load bookings');
+        const data = await response.json();
+
+        // Filter out bookings already approved/rejected by this SC member
+        const filteredBookings = data.filter(
+          booking => !booking.approvals?.some(
+            approval => approval.approverEmail === userEmail
+          )
+        );
+        
+        setBookings(filteredBookings);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBookings();
+  }, [token, userEmail]);
+
+  const handleCommentChange = (bookingKey, value) => {
+    setComments(prev => ({ ...prev, [bookingKey]: value }));
+  };
+
+  const handleApproval = async (booking, status) => {
+    const bookingKey = `${booking.block}-${booking.roomNo}-${booking.startTime}`;
+    const comment = comments[bookingKey] || '';
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/bookings/${booking.block}/${booking.roomNo}/${booking.startTime}/approvals`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            approverEmail: userEmail,
+            status: status,
+            comments: comment
+          })
+        }
+      );
+      
+      if (!response.ok) throw new Error('Approval action failed');
+      
+      // Remove approved booking from list
+      setBookings(prev => 
+        prev.filter(b => 
+          !(b.block === booking.block && 
+            b.roomNo === booking.roomNo && 
+            b.startTime === booking.startTime)
+        )
+      );
+      
+      // Clear comment for this booking
+      setComments(prev => {
+        const newComments = { ...prev };
+        delete newComments[bookingKey];
+        return newComments;
+      });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  return (
+    <>
+      <Header />
+      <div className="prof-dash-container">
+        <h2>Pending Approvals - Student Council</h2>
+        <table className="prof-dash-table">
+          <thead>
+            <tr>
+              <th>Club</th>
+              <th>Room</th>
+              <th>Time</th>
+              <th>Purpose</th>
+              <th>Comments</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bookings.map(booking => {
+              const bookingKey = `${booking.block}-${booking.roomNo}-${booking.startTime}`;
+              return (
+                <tr key={bookingKey}>
+                  <td>{booking.clubName}</td>
+                  <td>{booking.block} {booking.roomNo}</td>
+                  <td>{new Date(booking.startTime).toLocaleString()}</td>
+                  <td>{booking.purpose}</td>
+                  <td>
+                    <input
+                      type="text"
+                      placeholder="Add comments"
+                      value={comments[bookingKey] || ''}
+                      onChange={e => handleCommentChange(bookingKey, e.target.value)}
+                      className="prof-dash-comment"
+                    />
+                  </td>
+                  <td>
+                    <button 
+                      className="prof-dash-approve" 
+                      onClick={() => handleApproval(booking, 'APPROVED')}
+                    >
+                      Approve
+                    </button>
+                    <button 
+                      className="prof-dash-reject" 
+                      onClick={() => handleApproval(booking, 'REJECTED')}
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+};
+
+export default ScDash;

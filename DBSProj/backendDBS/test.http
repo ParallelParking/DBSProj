@@ -19,7 +19,7 @@
 @culturalProfPassword = profpass2
 
 # Approver: Student Council Member
-@scMemberEmail = sc.member1.example.com
+@scMemberEmail = sc.member1@example.com
 @scMemberPassword = scpass1
 
 # Approver: Security Member

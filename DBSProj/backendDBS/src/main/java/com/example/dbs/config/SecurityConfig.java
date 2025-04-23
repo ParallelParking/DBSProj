@@ -50,7 +50,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/clubs/**").permitAll()  // Public GET for clubs
                 .requestMatchers(HttpMethod.POST, "/api/memberships").permitAll() // ✅ allow membership registration
                 .requestMatchers(HttpMethod.GET, "/api/memberships/student/**").hasRole("STUDENT") // Add this
-                .requestMatchers(HttpMethod.GET, "/api/rooms").hasRole("STUDENT") 
+                .requestMatchers("/api/student-council/**").hasRole("STUDENT_COUNCIL")
+                .requestMatchers(HttpMethod.GET, "/api/rooms").hasAnyRole("STUDENT", "FLOOR_MANAGER")
                 .requestMatchers("/api/public/**").permitAll() // Any other public APIs
                 .requestMatchers("/api/**").authenticated()   // All other /api endpoints require auth
                 .anyRequest().permitAll()                     // Allow everything else (e.g. static resources)

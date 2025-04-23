@@ -193,3 +193,116 @@ select{
     color: #666;
     margin-top: 5px;
 }
+
+.prof-dash-container {
+    margin: 2rem auto;
+    max-width: 1000px;
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+  }
+  
+  .prof-dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  
+  .prof-dash-table th, .prof-dash-table td {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-size: 1.05rem;
+  }
+  
+  .prof-dash-table th {
+    background: #222;
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 2px solid #333;
+  }
+  
+  .prof-dash-table tr:not(:last-child) td {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .prof-dash-table tbody tr:nth-child(even) {
+    background-color: #f7f7f7;
+  }
+  
+  .prof-dash-table tbody tr:hover {
+    background-color: #eaeaea;
+  }
+  
+  .prof-dash-comment {
+    width: 95%;
+    padding: 0.45rem 0.7rem;
+    border: 1.5px solid #bbb;
+    border-radius: 4px;
+    font-size: 1rem;
+    background: #fafafa;
+    color: #222;
+    transition: border-color 0.2s;
+  }
+  .prof-dash-comment:focus {
+    border-color: #222;
+    outline: none;
+  }
+  
+  .prof-dash-approve, .prof-dash-reject {
+    min-width: 90px;
+    margin: 0 0.2rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 
+      background 0.18s,
+      color 0.18s,
+      box-shadow 0.18s,
+      transform 0.13s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    outline: none;
+  }
+  
+  .prof-dash-approve {
+    background: #222;
+    color: #fff;
+  }
+  .prof-dash-approve:hover, .prof-dash-approve:focus {
+    background: #444;
+    color: #fff;
+    transform: translateY(-1px) scale(1.03);
+  }
+  
+  .prof-dash-reject {
+    background: #fff;
+    color: #222;
+    border: 1.5px solid #222;
+  }
+  .prof-dash-reject:hover, .prof-dash-reject:focus {
+    background: #222;
+    color: #fff;
+    transform: translateY(-1px) scale(1.03);
+  }
+  
+  @media (max-width: 700px) {
+    .prof-dash-container {
+      padding: 1rem 0.3rem;
+    }
+    .prof-dash-table th, .prof-dash-table td {
+      padding: 0.7rem 0.4rem;
+      font-size: 0.98rem;
+    }
+    .prof-dash-approve, .prof-dash-reject {
+      min-width: 70px;
+      padding: 0.4rem 0.7rem;
+      font-size: 0.95rem;
+    }
+  }
+  
