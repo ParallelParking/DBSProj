@@ -1,3 +1,8 @@
+-- SOMETHING TO NOTE:
+-- I WAS HAVING ISSUES KEEPING PL/pgSQL FUNCTIONS AND SQL QUERIES IN THE SAME FILE BECAUSE
+-- QUERIES USE ';' AS A SEPARATOR, WHILE PL/pgSQL USE IT SYNTACTICALLY AND '$$' AS SEPARATOR
+-- TO COMBAT THIS, IN application.properties I'VE DEFINED A COMMON SEPARATOR, '//', HENCE ITS USE.
+
 -- Drop Foreign Key Constraints (mirrors Hibernate's drop behavior)
 ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBCN; // -- FK booking club name
 ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBR; // -- FK booking room
@@ -128,44 +133,3 @@ CREATE TABLE booking_approval (
     -- Composite Foreign Key referencing booking's composite primary key
     CONSTRAINT FKBAB FOREIGN KEY (start_time, block, room_no) REFERENCES booking(start_time, block, room_no)
 ); //
-
-CREATE OR REPLACE FUNCTION check_booking_not_null_fields()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Check essential fields derived from the composite primary key and relationships
-  IF NEW.block IS NULL THEN
-    RAISE EXCEPTION 'Booking cannot be inserted: "block" cannot be NULL.';
-  END IF;
-  IF NEW.room_no IS NULL THEN
-    RAISE EXCEPTION 'Booking cannot be inserted: "room_no" cannot be NULL.';
-  END IF;
-  IF NEW.start_time IS NULL THEN
-    RAISE EXCEPTION 'Booking cannot be inserted: "start_time" cannot be NULL.';
-  END IF;
-
-  -- Check other logically required fields for a valid initial booking request
-  IF NEW.end_time IS NULL THEN
-    RAISE EXCEPTION 'Booking cannot be inserted: "end_time" cannot be NULL.';
-  END IF;
-  IF NEW.purpose IS NULL THEN
-    RAISE EXCEPTION 'Booking cannot be inserted: "purpose" cannot be NULL.';
-  END IF;
-  IF NEW.student_email IS NULL THEN
-    RAISE EXCEPTION 'Booking cannot be inserted: "student_email" cannot be NULL.';
-  END IF;
-  IF NEW.club_name IS NULL THEN
-    RAISE EXCEPTION 'Booking cannot be inserted: "club_name" cannot be NULL';
-  END IF;
-  -- Note: overall_status is usually set by the application logic/default, not checked on initial insert.
-
-  -- If all checks pass, allow the insertion
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql; //
-
-DROP TRIGGER IF EXISTS trg_check_booking_not_null ON booking; //
-
-CREATE TRIGGER trg_check_booking_not_null
-BEFORE INSERT ON booking
-FOR EACH ROW
-EXECUTE FUNCTION check_booking_not_null_fields(); //
