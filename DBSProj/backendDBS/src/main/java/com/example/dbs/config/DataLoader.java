@@ -89,8 +89,17 @@ public class DataLoader implements CommandLineRunner {
         prof2.setPassword(passwordEncoder.encode("profpass2"));
         prof2.setName("Faculty Head Two");
         prof2.setPhone(9998887771L);
-        prof2.setIsCultural(true); // Example value
+        prof2.setIsCultural(false); // Example value
         professorRepository.save(prof2);
+
+        // cultural department
+        Professor prof3 = new Professor();
+        prof3.setEmail("cultural.prof@example.com");
+        prof3.setPassword(passwordEncoder.encode("profpass3"));
+        prof3.setName("Cultural Prof");
+        prof3.setPhone(8887776661L);
+        prof3.setIsCultural(true); // Cultural professor
+        professorRepository.save(prof3);
 
         // --- create  floor managers ---
         FloorManager manager1 = new FloorManager();
@@ -106,27 +115,6 @@ public class DataLoader implements CommandLineRunner {
         manager2.setName("Floor Manager Two");
         manager2.setPhone(4445556662L);
         floorManagerRepository.save(manager2);
-
-        FloorManager manager3 = new FloorManager();
-        manager3.setEmail("floor.manager3@example.com");
-        manager3.setPassword(passwordEncoder.encode("managerpass3"));
-        manager3.setName("Floor Manager Three");
-        manager3.setPhone(4445556663L);
-        floorManagerRepository.save(manager3);
-
-        FloorManager manager4 = new FloorManager();
-        manager4.setEmail("floor.manager4@example.com");
-        manager4.setPassword(passwordEncoder.encode("managerpass4"));
-        manager4.setName("Floor Manager Four");
-        manager4.setPhone(4445556664L);
-        floorManagerRepository.save(manager4);
-
-        FloorManager manager5 = new FloorManager();
-        manager5.setEmail("floor.manager5@example.com");
-        manager5.setPassword(passwordEncoder.encode("managerpass5"));
-        manager5.setName("Floor Manager Five");
-        manager5.setPhone(4445556665L);
-        floorManagerRepository.save(manager5);
 
         // --- create SC member ---
         StudentCouncil member = new StudentCouncil();
@@ -168,36 +156,6 @@ public class DataLoader implements CommandLineRunner {
             FloorManager manager2 = manager2Optional.get();
             room2_1.setManager(manager2);
             roomRepository.save(room2_1);
-        }
-
-        Room room3_1 = new Room();
-        room3_1.setBlock("AB3");
-        room3_1.setRoom("101");
-        Optional<FloorManager> manager3Optional = floorManagerRepository.findByEmail("floor.manager3@example.com");
-        if (!manager3Optional.isEmpty()) {
-            FloorManager manager3 = manager3Optional.get();
-            room3_1.setManager(manager3);
-            roomRepository.save(room3_1);
-        }
-
-        Room room4_1 = new Room();
-        room4_1.setBlock("AB4");
-        room4_1.setRoom("101");
-        Optional<FloorManager> manager4Optional = floorManagerRepository.findByEmail("floor.manager4@example.com");
-        if (!manager4Optional.isEmpty()) {
-            FloorManager manager4 = manager4Optional.get();
-            room4_1.setManager(manager4);
-            roomRepository.save(room4_1);
-        }
-
-        Room room5_1 = new Room();
-        room5_1.setBlock("AB5");
-        room5_1.setRoom("101");
-        Optional<FloorManager> manager5Optional = floorManagerRepository.findByEmail("floor.manager5@example.com");
-        if (!manager5Optional.isEmpty()) {
-            FloorManager manager5 = manager5Optional.get();
-            room5_1.setManager(manager5);
-            roomRepository.save(room5_1);
         }
     }
 
