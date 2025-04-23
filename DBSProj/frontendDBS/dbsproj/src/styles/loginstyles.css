@@ -124,17 +124,19 @@ select{
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.5);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 .approval-modal {
     background: white;
-    padding: 25px;
+    padding: 2rem;
     border-radius: 8px;
-    width: 500px;
+    max-width: 500px;
+    width: 90%;
     position: relative;
 }
 

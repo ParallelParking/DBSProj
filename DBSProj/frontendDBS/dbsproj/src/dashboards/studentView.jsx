@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Header from '../components/header';
 
 export default function StudentView() {
     const [bookings, setBookings] = useState([]);
@@ -9,11 +10,21 @@ export default function StudentView() {
     const jwt = localStorage.getItem('jwt');
 
     const approvalRoles = [
-        'Student Council',
-        'Faculty Advisor', 
+        'Faculty Head',
+        'Student Council', 
+        'Cultural Professor',
         'Floor Manager',
         'Security'
     ];
+
+    // Add role mapping to backend enum values
+    const roleToEnumMap = {
+        'Faculty Head': 'FACULTY_HEAD',
+        'Student Council': 'STUDENT_COUNCIL',
+        'Cultural Professor': 'CULTURAL_PROF',
+        'Floor Manager': 'FLOOR_MANAGER',
+        'Security': 'SECURITY'
+    };
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -37,19 +48,20 @@ export default function StudentView() {
     }, [studentEmail, jwt]);
 
     const ApprovalStatusBadge = ({ status }) => (
-        <span className={`status-badge ${status?.toLowerCase()}`}>
+        <span className={`status-badge ${status}`}>
             {status || 'Not Approved'}
         </span>
     );
 
     const ApprovalItem = ({ role, booking }) => {
-        // Directly check approvals array for this role
-        const approval = booking.approvals?.find(a => a.role === role);
+        // Map display role to backend enum value
+        const enumRole = roleToEnumMap[role];
+        const approval = booking.approvals?.find(a => a.approverRole === enumRole);
         
         return (
             <div className="approval-item">
                 <span className="role">{role}:</span>
-                <ApprovalStatusBadge status={approval?.status || 'Not Approved'} />
+                <ApprovalStatusBadge status={approval?.approvalStatus || 'Pending'} />
                 {approval?.comments && (
                     <div className="comments">Comments: {approval.comments}</div>
                 )}
@@ -58,8 +70,8 @@ export default function StudentView() {
     };
 
     const ApprovalModal = ({ booking, onClose }) => (
-        <div className="approval-modal-overlay">
-            <div className="approval-modal">
+        <div className="approval-modal-overlay" onClick={onClose}>
+            <div className="approval-modal" onClick={(e) => e.stopPropagation()}>
                 <button className="close-button" onClick={onClose}>×</button>
                 <h3>Approval Status for {booking.block}-{booking.roomNo}</h3>
                 <p>Date: {new Date(booking.startTime).toLocaleDateString()}</p>
@@ -78,46 +90,50 @@ export default function StudentView() {
         </div>
     );
 
+
     if (loading) return <div>Loading bookings...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="student-view">
-            <h2>Your Bookings</h2>
-            <table className="bookings-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Block</th>
-                        <th>Room</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {bookings.map(booking => (
-                        <tr key={booking.startTime} onClick={() => setSelectedBooking(booking)}>
-                            <td>{new Date(booking.startTime).toLocaleDateString()}</td>
-                            <td>
-                                {new Date(booking.startTime).toLocaleTimeString()} - 
-                                {new Date(booking.endTime).toLocaleTimeString()}
-                            </td>
-                            <td>{booking.block}</td>
-                            <td>{booking.roomNo}</td>
-                            <td>
-                                <ApprovalStatusBadge status={booking.overallStatus} />
-                            </td>
+        <>
+            <Header />
+            <div className="student-view">
+                <h2>Your Bookings</h2>
+                <table className="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Block</th>
+                            <th>Room</th>
+                            <th>Status</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {bookings.map(booking => (
+                            <tr key={booking.startTime} onClick={() => setSelectedBooking(booking)}>
+                                <td>{new Date(booking.startTime).toLocaleDateString()}</td>
+                                <td>
+                                    {new Date(booking.startTime).toLocaleTimeString()} - 
+                                    {new Date(booking.endTime).toLocaleTimeString()}
+                                </td>
+                                <td>{booking.block}</td>
+                                <td>{booking.roomNo}</td>
+                                <td>
+                                    <ApprovalStatusBadge status={booking.overallStatus} />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
-            {selectedBooking && (
-                <ApprovalModal 
-                    booking={selectedBooking} 
-                    onClose={() => setSelectedBooking(null)}
-                />
-            )}
-        </div>
+                {selectedBooking && (
+                    <ApprovalModal 
+                        booking={selectedBooking} 
+                        onClose={() => setSelectedBooking(null)}
+                    />
+                )}
+            </div>
+        </>
     );
 }
