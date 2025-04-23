@@ -14,6 +14,8 @@ public interface BookingRepository extends JpaRepository<Booking, BookingId> {
 
     List<Booking> findByBlockAndRoomNo(String block, String room);
 
+    List<Booking> findByStudentEmail(String studentEmail);
+
     // An overlap occurs if:
     // (Existing Start Time < New End Time) AND (Existing End Time > New Start Time)
     // We also exclude bookings that are CANCELLED or REJECTED.

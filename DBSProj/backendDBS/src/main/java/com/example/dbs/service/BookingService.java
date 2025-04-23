@@ -51,6 +51,10 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
+    public List<Booking> getBookingsByStudentEmail(String studentEmail) {
+        return bookingRepository.findByStudentEmail(studentEmail);
+    }
+
     public Optional<Booking> getBookingById(BookingId id) {
         return bookingRepository.findById(id);
     }

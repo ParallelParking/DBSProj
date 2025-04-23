@@ -199,3 +199,27 @@ Content-Type: application/json
 GET {{baseUrl}}/api/bookings/{{bookingBlock}}/{{bookingRoom}}/{{bookingStartTime}}
 Authorization: Bearer {{studentToken}}
 
+
+### Login as Floor Manager to get JWT
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "floor.manager2@example.com",
+  "password": "managerpass2"
+}
+
+
+### Add Floor Manager Approval for booking AB2-101 on 2025-04-24T00:00:00
+
+POST http://localhost:8080/api/bookings/AB2/101/2025-04-24T00:00:00/approvals
+Content-Type: application/json
+Authorization: Bearer {{floorManagerToken}}
+
+{
+  "approverEmail": "floor.manager2@example.com",
+  "status": "APPROVED",
+  "comments": "All checks done"
+}
+
+

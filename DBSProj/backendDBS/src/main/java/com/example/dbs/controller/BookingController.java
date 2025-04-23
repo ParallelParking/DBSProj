@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -63,6 +64,11 @@ public class BookingController {
 
         return bookingOptional.map(ResponseEntity::ok)
                               .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(params = "studentEmail")
+    public List<Booking> getBookingsByStudentEmail(@RequestParam String studentEmail) {
+        return bookingService.getBookingsByStudentEmail(studentEmail);
     }
 
     // POST /api/bookings - Create a new booking
