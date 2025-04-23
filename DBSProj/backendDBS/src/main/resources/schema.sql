@@ -104,12 +104,12 @@ CREATE TABLE booking (
     club_name VARCHAR(255),
     overall_status VARCHAR(255) CHECK (overall_status IN ('PENDING_APPROVAL','APPROVED','REJECTED','CANCELLED')),
     purpose VARCHAR(255),
-    FKSE VARCHAR(255),
+    student_email VARCHAR(255),
     PRIMARY KEY (start_time, block, room_no),
     CONSTRAINT FKBCN FOREIGN KEY (club_name) REFERENCES club(name),
     -- References room table using its composite key (block, room) but matches booking columns (block, room_no)
     CONSTRAINT FKBR FOREIGN KEY (block, room_no) REFERENCES room(block, room),
-    CONSTRAINT FKBSE FOREIGN KEY (FKSE) REFERENCES student(email)
+    CONSTRAINT FKBSE FOREIGN KEY (student_email) REFERENCES student(email)
 );
 
 CREATE TABLE booking_approval (
