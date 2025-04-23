@@ -1,31 +1,33 @@
 -- Drop Foreign Key Constraints (mirrors Hibernate's drop behavior)
-ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBCN; -- FK booking club name
-ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBR; -- FK booking room
-ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBSE; -- FK booking student email
-ALTER TABLE IF EXISTS booking_approval DROP CONSTRAINT IF EXISTS FKBAB; -- FK booking approval
-ALTER TABLE IF EXISTS club DROP CONSTRAINT IF EXISTS FKFHE; -- FK faculty head email
-ALTER TABLE IF EXISTS club DROP CONSTRAINT IF EXISTS FKPSE; -- FK poc student email
-ALTER TABLE IF EXISTS club_membership DROP CONSTRAINT IF EXISTS FKCNC; -- FK club name
-ALTER TABLE IF EXISTS club_membership DROP CONSTRAINT IF EXISTS FKCMSE; -- FK club member student email
-ALTER TABLE IF EXISTS floor_manager DROP CONSTRAINT IF EXISTS FKFME; -- FK floor manager email
-ALTER TABLE IF EXISTS professor DROP CONSTRAINT IF EXISTS FKPE; -- FK prof email
-ALTER TABLE IF EXISTS room DROP CONSTRAINT IF EXISTS FKRME; -- FK room manager email
-ALTER TABLE IF EXISTS security DROP CONSTRAINT IF EXISTS FKSEE; -- FK security email
-ALTER TABLE IF EXISTS student DROP CONSTRAINT IF EXISTS FKSE; -- FK student email
-ALTER TABLE IF EXISTS student_council DROP CONSTRAINT IF EXISTS FKSCSE; -- FK student council to student email
+ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBCN; // -- FK booking club name
+ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBR; // -- FK booking room
+ALTER TABLE IF EXISTS booking DROP CONSTRAINT IF EXISTS FKBSE; // -- FK booking student email
+ALTER TABLE IF EXISTS booking_approval DROP CONSTRAINT IF EXISTS FKBAB; // -- FK booking approval
+ALTER TABLE IF EXISTS club DROP CONSTRAINT IF EXISTS FKFHE; // -- FK faculty head email
+ALTER TABLE IF EXISTS club DROP CONSTRAINT IF EXISTS FKPSE; // -- FK poc student email
+ALTER TABLE IF EXISTS club_membership DROP CONSTRAINT IF EXISTS FKCNC; // -- FK club name
+ALTER TABLE IF EXISTS club_membership DROP CONSTRAINT IF EXISTS FKCMSE; // -- FK club member student email
+ALTER TABLE IF EXISTS floor_manager DROP CONSTRAINT IF EXISTS FKFME; // -- FK floor manager email
+ALTER TABLE IF EXISTS professor DROP CONSTRAINT IF EXISTS FKPE; // -- FK prof email
+ALTER TABLE IF EXISTS room DROP CONSTRAINT IF EXISTS FKRME; // -- FK room manager email
+ALTER TABLE IF EXISTS security DROP CONSTRAINT IF EXISTS FKSEE; // -- FK security email
+ALTER TABLE IF EXISTS student DROP CONSTRAINT IF EXISTS FKSE; // -- FK student email
+ALTER TABLE IF EXISTS student_council DROP CONSTRAINT IF EXISTS FKSCSE; // -- FK student council to student email
+
 
 -- Drop Tables (Use CASCADE to handle dependencies automatically)
-DROP TABLE IF EXISTS booking_approval CASCADE;
-DROP TABLE IF EXISTS booking CASCADE;
-DROP TABLE IF EXISTS club_membership CASCADE;
-DROP TABLE IF EXISTS club CASCADE;
-DROP TABLE IF EXISTS room CASCADE;
-DROP TABLE IF EXISTS student_council CASCADE;
-DROP TABLE IF EXISTS floor_manager CASCADE;
-DROP TABLE IF EXISTS professor CASCADE;
-DROP TABLE IF EXISTS security CASCADE;
-DROP TABLE IF EXISTS student CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS booking_approval CASCADE; //
+DROP TABLE IF EXISTS booking CASCADE; //
+DROP TABLE IF EXISTS club_membership CASCADE; //
+DROP TABLE IF EXISTS club CASCADE; //
+DROP TABLE IF EXISTS room CASCADE; //
+DROP TABLE IF EXISTS student_council CASCADE; //
+DROP TABLE IF EXISTS floor_manager CASCADE; //
+DROP TABLE IF EXISTS professor CASCADE; //
+DROP TABLE IF EXISTS security CASCADE; //
+DROP TABLE IF EXISTS student CASCADE; //
+DROP TABLE IF EXISTS users CASCADE; //
+
 
 -- Create Tables
 CREATE TABLE users (
@@ -34,33 +36,33 @@ CREATE TABLE users (
     name VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (email)
-);
+); //
 
 CREATE TABLE student (
     email VARCHAR(255) NOT NULL,
     regno BIGINT UNIQUE,
     PRIMARY KEY (email),
     CONSTRAINT FKSE FOREIGN KEY (email) REFERENCES users(email)
-);
+); //
 
 CREATE TABLE professor (
     email VARCHAR(255) NOT NULL,
     is_cultural BOOLEAN,
     PRIMARY KEY (email),
     CONSTRAINT FKPE FOREIGN KEY (email) REFERENCES users(email)
-);
+); //
 
 CREATE TABLE floor_manager (
     email VARCHAR(255) NOT NULL,
     PRIMARY KEY (email),
     CONSTRAINT FKFME FOREIGN KEY (email) REFERENCES users(email)
-);
+); //
 
 CREATE TABLE security (
     email VARCHAR(255) NOT NULL,
     PRIMARY KEY (email),
     CONSTRAINT FKSEE FOREIGN KEY (email) REFERENCES users(email)
-);
+); //
 
 CREATE TABLE student_council (
     email VARCHAR(255) NOT NULL,
@@ -69,7 +71,7 @@ CREATE TABLE student_council (
     PRIMARY KEY (email),
     -- Constraint links StudentCouncil to Student (which links to Users)
     CONSTRAINT FKSCSE FOREIGN KEY (email) REFERENCES student(email)
-);
+); //
 
 CREATE TABLE room (
     block VARCHAR(255) NOT NULL,
@@ -77,7 +79,7 @@ CREATE TABLE room (
     manager_email VARCHAR(255),
     PRIMARY KEY (block, room),
     CONSTRAINT FKRME FOREIGN KEY (manager_email) REFERENCES floor_manager(email)
-);
+); //
 
 CREATE TABLE club (
     name VARCHAR(255) NOT NULL,
@@ -86,7 +88,7 @@ CREATE TABLE club (
     PRIMARY KEY (name),
     CONSTRAINT FKFHE FOREIGN KEY (faculty_head_email) REFERENCES professor(email),
     CONSTRAINT FKPSE FOREIGN KEY (poc_student_email) REFERENCES student(email)
-);
+); //
 
 CREATE TABLE club_membership (
     club_name VARCHAR(255) NOT NULL,
@@ -94,7 +96,7 @@ CREATE TABLE club_membership (
     PRIMARY KEY (club_name, stu_email),
     CONSTRAINT FKCNC FOREIGN KEY (club_name) REFERENCES club(name),
     CONSTRAINT FKCMSE FOREIGN KEY (stu_email) REFERENCES student(email)
-);
+); //
 
 CREATE TABLE booking (
     start_time TIMESTAMP(6) NOT NULL,
@@ -110,7 +112,7 @@ CREATE TABLE booking (
     -- References room table using its composite key (block, room) but matches booking columns (block, room_no)
     CONSTRAINT FKBR FOREIGN KEY (block, room_no) REFERENCES room(block, room),
     CONSTRAINT FKBSE FOREIGN KEY (student_email) REFERENCES student(email)
-);
+); //
 
 CREATE TABLE booking_approval (
     id BIGINT GENERATED BY DEFAULT AS IDENTITY,
@@ -125,4 +127,45 @@ CREATE TABLE booking_approval (
     PRIMARY KEY (id),
     -- Composite Foreign Key referencing booking's composite primary key
     CONSTRAINT FKBAB FOREIGN KEY (start_time, block, room_no) REFERENCES booking(start_time, block, room_no)
-);
+); //
+
+CREATE OR REPLACE FUNCTION check_booking_not_null_fields()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Check essential fields derived from the composite primary key and relationships
+  IF NEW.block IS NULL THEN
+    RAISE EXCEPTION 'Booking cannot be inserted: "block" cannot be NULL.';
+  END IF;
+  IF NEW.room_no IS NULL THEN
+    RAISE EXCEPTION 'Booking cannot be inserted: "room_no" cannot be NULL.';
+  END IF;
+  IF NEW.start_time IS NULL THEN
+    RAISE EXCEPTION 'Booking cannot be inserted: "start_time" cannot be NULL.';
+  END IF;
+
+  -- Check other logically required fields for a valid initial booking request
+  IF NEW.end_time IS NULL THEN
+    RAISE EXCEPTION 'Booking cannot be inserted: "end_time" cannot be NULL.';
+  END IF;
+  IF NEW.purpose IS NULL THEN
+    RAISE EXCEPTION 'Booking cannot be inserted: "purpose" cannot be NULL.';
+  END IF;
+  IF NEW.student_email IS NULL THEN
+    RAISE EXCEPTION 'Booking cannot be inserted: "student_email" cannot be NULL.';
+  END IF;
+  IF NEW.club_name IS NULL THEN
+    RAISE EXCEPTION 'Booking cannot be inserted: "club_name" cannot be NULL';
+  END IF;
+  -- Note: overall_status is usually set by the application logic/default, not checked on initial insert.
+
+  -- If all checks pass, allow the insertion
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql; //
+
+DROP TRIGGER IF EXISTS trg_check_booking_not_null ON booking; //
+
+CREATE TRIGGER trg_check_booking_not_null
+BEFORE INSERT ON booking
+FOR EACH ROW
+EXECUTE FUNCTION check_booking_not_null_fields(); //
